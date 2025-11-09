@@ -1,0 +1,13 @@
+- setup camera angle and map shape;
+- base character running with câmera following;
+- obstacles e character movement;
+- player projectiles colliding with obstacles;
+- music and sfx;
+- enemies with life cycle;
+- player stats;
+- drops from enemies;
+- level up UI; 
+- player upgrades;
+- boss and level finish;
+- main menu;
+- assets for actors and map;
