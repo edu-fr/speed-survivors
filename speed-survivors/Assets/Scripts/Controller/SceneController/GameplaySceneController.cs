@@ -11,13 +11,16 @@ namespace Controller.SceneController
 		[field: SerializeField]
 		private PlayerController Player { get; set; }
 
-		// Start is called once before the first execution of Update after the MonoBehaviour is created
-		void Start()
+		void Awake()
 		{
 			Player.SetPosition(StartingPoint.position);
 		}
 
-		// Update is called once per frame
+		void Start()
+		{
+
+		}
+
 		void Update()
 		{
 		}

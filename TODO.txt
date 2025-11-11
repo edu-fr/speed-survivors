@@ -1,5 +1,4 @@
 	- setup camera angle and map shape;
-- base character running with câmera following;
 - obstacles e character movement;
 - player projectiles colliding with obstacles;
 - music and sfx;
