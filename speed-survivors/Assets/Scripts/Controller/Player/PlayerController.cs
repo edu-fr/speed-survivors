@@ -1,6 +1,4 @@
-using ProjectInput;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Controller.Player
 {
@@ -12,26 +10,31 @@ namespace Controller.Player
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
 
-		private void Start()
+		private bool Initialized { get; set; }
+
+		public void Init(Vector3 startingPos, float xMoveMinRange, float xMoveMaxRange)
 		{
 			InputHandler = new PlayerInputHandler(MainCamera);
-			MovementHandler = new PlayerMovementHandler(transform);
+			MovementHandler = new PlayerMovementHandler(transform, xMoveMinRange, xMoveMaxRange);
+			transform.position = startingPos;
+
+			Initialized = true;
 		}
 
 		private void Update()
 		{
+			if (!Initialized)
+				return;
+
 			HandleMovement();
 		}
 
 		private void HandleMovement()
 		{
-			var dirX = InputHandler.GetXTargetPositionBasedOnCurrentInput();
-			MovementHandler.UpdatePlayerMovement(dirX);
-		}
-
-		public void SetPosition(Vector3 position)
-		{
-			transform.position = position;
+			if (InputHandler.GetTargetInputPos(out var xPos))
+			{
+				MovementHandler.UpdatePlayerMovement(xPos);
+			}
 		}
 	}
 }

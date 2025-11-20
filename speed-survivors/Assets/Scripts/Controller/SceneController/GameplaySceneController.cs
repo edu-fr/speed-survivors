@@ -11,18 +11,12 @@ namespace Controller.SceneController
 		[field: SerializeField]
 		private PlayerController Player { get; set; }
 
-		void Awake()
-		{
-			Player.SetPosition(StartingPoint.position);
-		}
+		[field: SerializeField]
+		private BoxCollider Ground { get; set; }
 
 		void Start()
 		{
-
-		}
-
-		void Update()
-		{
+			Player.Init(StartingPoint.position, Ground.bounds.min.x, Ground.bounds.max.x);
 		}
 	}
 }

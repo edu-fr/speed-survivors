@@ -21,18 +21,21 @@ namespace Controller.Player
 			PlayerInputActions.Gameplay.Enable();
 		}
 
-		public float GetXTargetPositionBasedOnCurrentInput()
+		public bool GetTargetInputPos(out float xPos)
 		{
+			xPos = 0;
+
 			if (!TouchPressAction.IsPressed())
 			{
-				return 0f;
+				return false;
 			}
 
-			Vector2 screenPosition = TouchPositionAction.ReadValue<Vector2>();
-			Vector3 screenPositionWithZ = new Vector3(screenPosition.x, screenPosition.y);
-			Vector3 worldPosition = Camera.ScreenToWorldPoint(screenPositionWithZ);
+			var touchPos = TouchPositionAction.ReadValue<Vector2>();
+			var worldPos = Camera.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 10));
 
-			return worldPosition.x;
+			xPos = worldPos.x;
+
+			return true;
 		}
 	}
 }
