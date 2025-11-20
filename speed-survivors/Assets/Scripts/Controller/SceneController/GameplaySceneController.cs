@@ -6,6 +6,9 @@ namespace Controller.SceneController
 	public class GameplaySceneController : MonoBehaviour
 	{
 		[field: SerializeField]
+		private Camera MainCamera { get; set; }
+
+		[field: SerializeField]
 		private Transform StartingPoint { get; set; }
 
 		[field: SerializeField]
@@ -16,7 +19,7 @@ namespace Controller.SceneController
 
 		void Start()
 		{
-			Player.Init(StartingPoint.position, Ground.bounds.min.x, Ground.bounds.max.x);
+			Player.Init(MainCamera, StartingPoint.position, Ground.bounds.min.x, Ground.bounds.max.x);
 		}
 	}
 }

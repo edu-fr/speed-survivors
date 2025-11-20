@@ -12,9 +12,9 @@ namespace Controller.Player
 		private InputAction TouchPressAction { get; set; }
 		private InputAction TouchPositionAction { get; set; }
 
-		public PlayerInputHandler(Camera mainCamera)
+		public PlayerInputHandler(Camera camera)
 		{
-			Camera = mainCamera;
+			Camera = camera;
 			PlayerInputActions = new PlayerInputActions();
 			TouchPressAction = PlayerInputActions.Gameplay.TouchPress;
 			TouchPositionAction = PlayerInputActions.Gameplay.TouchPosition;
@@ -23,16 +23,14 @@ namespace Controller.Player
 
 		public bool GetTargetInputPos(out float xPos)
 		{
-			xPos = 0;
-
 			if (!TouchPressAction.IsPressed())
 			{
+				xPos = 0;
 				return false;
 			}
 
 			var touchPos = TouchPositionAction.ReadValue<Vector2>();
-			var worldPos = Camera.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 10));
-
+			var worldPos = Camera.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, Camera.transform.position.z * -1));
 			xPos = worldPos.x;
 
 			return true;

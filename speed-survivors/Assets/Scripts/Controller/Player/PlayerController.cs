@@ -5,18 +5,24 @@ namespace Controller.Player
 	public class PlayerController : MonoBehaviour
 	{
 		[field: SerializeField]
-		private Camera MainCamera { get; set; }
+		private BoxCollider Collider { get; set; }
 
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
+		private float CurrentTargetX { get; set; }
 
 		private bool Initialized { get; set; }
 
-		public void Init(Vector3 startingPos, float xMoveMinRange, float xMoveMaxRange)
+		public void Init(Camera mainCamera, Vector3 startingPos, float groundMinBoundX, float groundMaxBoundX)
 		{
-			InputHandler = new PlayerInputHandler(MainCamera);
-			MovementHandler = new PlayerMovementHandler(transform, xMoveMinRange, xMoveMaxRange);
-			transform.position = startingPos;
+			InputHandler = new PlayerInputHandler(mainCamera);
+
+			var playerWidth = Collider.size.x;
+			var movementMinBoundX = groundMinBoundX + playerWidth/2f;
+			var movementMaxBoundX = groundMaxBoundX - playerWidth/2f;
+			MovementHandler = new PlayerMovementHandler(transform, movementMinBoundX, movementMaxBoundX);
+
+			SetupStartingPosition(startingPos);
 
 			Initialized = true;
 		}
@@ -26,15 +32,34 @@ namespace Controller.Player
 			if (!Initialized)
 				return;
 
+			HandleInput();
+		}
+
+		private void FixedUpdate()
+		{
+			if (!Initialized)
+				return;
+
 			HandleMovement();
+		}
+
+		private void HandleInput()
+		{
+			if (InputHandler.GetTargetInputPos(out var xPos))
+			{
+				CurrentTargetX = xPos;
+			}
 		}
 
 		private void HandleMovement()
 		{
-			if (InputHandler.GetTargetInputPos(out var xPos))
-			{
-				MovementHandler.UpdatePlayerMovement(xPos);
-			}
+			MovementHandler.UpdatePlayerMovement(CurrentTargetX);
+		}
+
+		private void SetupStartingPosition(Vector3 startingPos)
+		{
+			transform.position = startingPos;
+			CurrentTargetX = startingPos.x;
 		}
 	}
 }
