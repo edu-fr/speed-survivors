@@ -20,17 +20,16 @@ namespace Controller.Player
 			PlayerInputActions.Gameplay.Enable();
 		}
 
-		public bool GetTargetInputPos(out float xPos)
+		public bool GetTargetInputPosition(out Vector3 worldPosition)
 		{
 			if (!TouchPressAction.IsPressed())
 			{
-				xPos = 0;
+				worldPosition = new Vector3(-1, -1, -1);
 				return false;
 			}
 
 			var touchPos = TouchPositionAction.ReadValue<Vector2>();
-			var worldPos = Camera.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, Camera.transform.position.z * -1));
-			xPos = worldPos.x;
+			worldPosition = Camera.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, Camera.transform.position.z * -1));
 
 			return true;
 		}

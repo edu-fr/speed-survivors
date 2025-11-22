@@ -24,7 +24,7 @@ namespace Controller.Player
 			SmoothTime = DefaultSmoothTime;
 		}
 
-		public void UpdatePlayerMovement(float directionX)
+		public void MovePlayerTowardsPosition(float directionX)
 		{
 			var target = new Vector3(Mathf.Clamp(directionX, MoveMinRange, MoveMaxRange), Transform.position.y, Transform.position.z);
 			Transform.position = Vector3.SmoothDamp(Transform.position, target, ref _currentVelocity, SmoothTime);

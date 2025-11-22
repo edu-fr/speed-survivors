@@ -1,3 +1,4 @@
+using Controller.Enemy;
 using Controller.Player;
 using UnityEngine;
 
@@ -12,14 +13,29 @@ namespace Controller.SceneController
 		private Transform StartingPoint { get; set; }
 
 		[field: SerializeField]
-		private PlayerController Player { get; set; }
+		private PlayerController PlayerPrefab { get; set; }
 
 		[field: SerializeField]
-		private BoxCollider Ground { get; set; }
+		private EnemySpawner EnemySpawner { get; set; }
+
+		[field: SerializeField]
+		private MeshRenderer Ground { get; set; }
 
 		void Start()
 		{
-			Player.Init(MainCamera, StartingPoint.position, Ground.bounds.min.x, Ground.bounds.max.x);
+			SpawnPlayer();
+			EnemySpawner.StartSpawningEnemies();
+		}
+
+		private void SpawnPlayer()
+		{
+			var player = Instantiate(PlayerPrefab);
+			player.Init(MainCamera, GetAdjustedStartingPositionOnGround(), Ground.bounds.min.x, Ground.bounds.max.x);
+		}
+
+		private Vector3 GetAdjustedStartingPositionOnGround()
+		{
+			return new Vector3(StartingPoint.position.x, Ground.bounds.max.y, StartingPoint.position.z);
 		}
 	}
 }

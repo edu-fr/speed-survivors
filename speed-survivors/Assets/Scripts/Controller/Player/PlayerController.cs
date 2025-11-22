@@ -6,7 +6,6 @@ namespace Controller.Player
 	{
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
-
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
 		private float CurrentTargetX { get; set; }
@@ -22,7 +21,7 @@ namespace Controller.Player
 			var movementMaxBoundX = groundMaxBoundX - playerWidth/2f;
 			MovementHandler = new PlayerMovementHandler(transform, movementMinBoundX, movementMaxBoundX);
 
-			SetupStartingPosition(startingPos);
+			SetupStartingPosition(startingPos, Collider.size.y);
 
 			Initialized = true;
 		}
@@ -45,20 +44,20 @@ namespace Controller.Player
 
 		private void HandleInput()
 		{
-			if (InputHandler.GetTargetInputPos(out var xPos))
+			if (InputHandler.GetTargetInputPosition(out var touchWorldPosition))
 			{
-				CurrentTargetX = xPos;
+				CurrentTargetX = touchWorldPosition.x;
 			}
 		}
 
 		private void HandleMovement()
 		{
-			MovementHandler.UpdatePlayerMovement(CurrentTargetX);
+			MovementHandler.MovePlayerTowardsPosition(CurrentTargetX);
 		}
 
-		private void SetupStartingPosition(Vector3 startingPos)
+		private void SetupStartingPosition(Vector3 startingPos, float playerHeight)
 		{
-			transform.position = startingPos;
+			transform.position = startingPos + new Vector3(0, playerHeight / 2f, 0);
 			CurrentTargetX = startingPos.x;
 		}
 	}
