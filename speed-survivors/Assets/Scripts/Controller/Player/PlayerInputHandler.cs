@@ -1,4 +1,3 @@
-using System;
 using ProjectInput;
 using UnityEngine;
 using UnityEngine.InputSystem;

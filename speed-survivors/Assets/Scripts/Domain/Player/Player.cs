@@ -1,6 +1,6 @@
 namespace Domain.Player
 {
-	public class PlayerDomain
+	public class Player
 	{
 	}
 }

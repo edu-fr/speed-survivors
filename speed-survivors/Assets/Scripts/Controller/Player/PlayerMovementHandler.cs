@@ -6,7 +6,6 @@ namespace Controller.Player
 	{
 		// A smaller value means faster, more "instant" following.
 		private const float DefaultSmoothTime = 0.2f;
-		private const float FastSmoothTime = 0.03f;
 
 		private Transform Transform { get; }
 		private float SmoothTime { get; }
