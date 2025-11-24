@@ -1,14 +1,19 @@
-using Domain.Interface.Weapon;
+using Controller.Interface.Weapon.Strategy;
+using Domain.Interface.Weapon.Config;
+using UnityEngine;
 
 namespace Controller.Weapon
 {
-	public class WeaponInstance
+	public abstract class WeaponInstance
 	{
-		private IWeaponConfig Config { get; set; }
+		protected IWeaponConfig Config { get; }
+		protected abstract IWeaponStrategy Strategy { get; }
 
-		public WeaponInstance(IWeaponConfig config)
+		protected WeaponInstance(IWeaponConfig config)
 		{
 			Config = config;
 		}
+
+		public abstract void Tick(Vector3 origin);
 	}
 }

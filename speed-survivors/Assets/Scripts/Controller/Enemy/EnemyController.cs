@@ -1,4 +1,5 @@
 using Domain.Enemy;
+using Domain.Interface.Enemy;
 using UnityEngine;
 
 namespace Controller.Enemy
@@ -6,15 +7,16 @@ namespace Controller.Enemy
 	public class EnemyController : MonoBehaviour
 	{
 		[field: SerializeField]
-		private float MoveSpeed { get; set; } = 2f;
-
-		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
 
-		private BaseEnemy Enemy { get; set; }
+		private IEnemy Enemy { get; set; }
 
-		private Vector3 _moveDirection = Vector3.back;
+		private readonly Vector3 _moveDirection = Vector3.back;
 
+		private void Awake()
+		{
+			Enemy = new Zombie();
+		}
 
 		private void FixedUpdate()
 		{
@@ -23,7 +25,7 @@ namespace Controller.Enemy
 
 		private void HandleMovement()
 		{
-			transform.Translate(_moveDirection * (MoveSpeed * Time.deltaTime));
+			transform.Translate(_moveDirection * (Enemy.MoveSpeed * Time.deltaTime));
 		}
 
 		public float GetHeight()

@@ -1,6 +1,6 @@
 using Domain.Interface.Player;
-using Domain.Interface.Weapon;
-using Domain.Weapon;
+using Domain.Interface.Weapon.Base;
+using Domain.Weapon.Base;
 
 namespace Domain.Player
 {

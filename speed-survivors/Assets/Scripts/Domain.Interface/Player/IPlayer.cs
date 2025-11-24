@@ -1,4 +1,4 @@
-using Domain.Interface.Weapon;
+using Domain.Interface.Weapon.Base;
 
 namespace Domain.Interface.Player
 {

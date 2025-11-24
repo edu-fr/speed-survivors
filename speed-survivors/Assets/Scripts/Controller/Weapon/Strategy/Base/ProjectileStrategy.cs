@@ -1,7 +1,8 @@
-using System.Numerics;
-using Domain.Interface.Weapon;
+using Controller.Interface.Weapon.Strategy;
+using Domain.Interface.Weapon.Config;
+using UnityEngine;
 
-namespace Domain.Weapon.Strategies
+namespace Controller.Weapon.Strategy.Base
 {
 	public class ProjectileStrategy : IWeaponStrategy
 	{

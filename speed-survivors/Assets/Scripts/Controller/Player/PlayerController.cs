@@ -10,6 +10,7 @@ namespace Controller.Player
 
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
+		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
 		private bool Initialized { get; set; }
 		private IPlayer Player { get; set; }
 
@@ -21,6 +22,7 @@ namespace Controller.Player
 			MovementHandler = new PlayerMovementHandler(Player, transform, playerMovementBounds, startingPos.x);
 
 			SetupStartingPosition(startingPos, Collider.size.y);
+			WeaponArsenalHandler = new PlayerWeaponArsenalHandler(Player);
 
 			Initialized = true;
 		}
@@ -40,6 +42,7 @@ namespace Controller.Player
 				return;
 
 			HandleInput();
+			WeaponArsenalHandler.Tick(transform.position);
 		}
 
 		private void FixedUpdate()
@@ -66,6 +69,11 @@ namespace Controller.Player
 		private void SetupStartingPosition(Vector3 startingPos, float playerHeight)
 		{
 			transform.position = startingPos + new Vector3(0, playerHeight / 2f, 0);
+		}
+
+		private void OnDestroy()
+		{
+			WeaponArsenalHandler.OnDestroy();
 		}
 	}
 }
