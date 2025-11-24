@@ -30,7 +30,7 @@ namespace Controller.SceneController
 		private void SpawnPlayer()
 		{
 			var player = Instantiate(PlayerPrefab);
-			player.Init(MainCamera, GetAdjustedStartingPositionOnGround(), Ground.bounds.min.x, Ground.bounds.max.x);
+			player.Init(MainCamera, GetAdjustedStartingPositionOnGround(), Ground.bounds);
 		}
 
 		private Vector3 GetAdjustedStartingPositionOnGround()

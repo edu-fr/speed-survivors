@@ -1,0 +1,19 @@
+using Domain.Interface.Weapon;
+
+namespace Domain.Interface.Player
+{
+	public interface IPlayer
+	{
+		float MaxHP { get; }
+
+		/// <summary>
+		/// Starting at 10, and increasing linearly up to 50.
+		/// In the player movement handler, translates to SmoothDamp movement from 0.2s up to 0.05s.
+		/// </summary>
+		float MoveSpeed { get; }
+
+		float BaseDamage { get; }
+		float CurrentHP { get; }
+		IWeaponArsenal Arsenal { get; }
+	}
+}

@@ -1,3 +1,4 @@
+using Domain.Interface.Player;
 using UnityEngine;
 
 namespace Controller.Player
@@ -6,22 +7,31 @@ namespace Controller.Player
 	{
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
+
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
 		private bool Initialized { get; set; }
+		private IPlayer Player { get; set; }
 
-		public void Init(Camera mainCamera, Vector3 startingPos, float groundMinBoundX, float groundMaxBoundX)
+		public void Init(Camera mainCamera, Vector3 startingPos, Bounds groundBounds)
 		{
+			Player = new Domain.Player.Player();
 			InputHandler = new PlayerInputHandler(mainCamera);
-
-			var playerWidth = Collider.size.x;
-			var movementMinBoundX = groundMinBoundX + playerWidth/2f;
-			var movementMaxBoundX = groundMaxBoundX - playerWidth/2f;
-			MovementHandler = new PlayerMovementHandler(transform, movementMinBoundX, movementMaxBoundX, startingPos.x);
+			var playerMovementBounds = GetPlayerMovementBounds(groundBounds, Collider);
+			MovementHandler = new PlayerMovementHandler(Player, transform, playerMovementBounds, startingPos.x);
 
 			SetupStartingPosition(startingPos, Collider.size.y);
 
 			Initialized = true;
+		}
+
+		private Bounds GetPlayerMovementBounds(Bounds groundBounds, BoxCollider playerCollider)
+		{
+			return new Bounds
+			{
+				min = new Vector3(groundBounds.min.x + playerCollider.size.x / 2f, groundBounds.min.y, groundBounds.min.z),
+				max = new Vector3(groundBounds.max.x - playerCollider.size.x / 2f, groundBounds.max.y, groundBounds.max.z)
+			};
 		}
 
 		private void Update()

@@ -1,6 +1,8 @@
+using Domain.Interface.Enemy;
+
 namespace Domain.Enemy
 {
-	public abstract class BaseEnemy
+	public abstract class BaseEnemy : IEnemy
 	{
 		public abstract float MaxHP { get; protected set; }
 		public abstract float MoveSpeed { get; protected set; }
