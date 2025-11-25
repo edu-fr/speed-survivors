@@ -5,11 +5,9 @@ namespace Controller.Player
 {
 	public class PlayerController : MonoBehaviour
 	{
-		[field: SerializeField]
-		private BoxCollider Collider { get; set; }
+		[field: SerializeField] private BoxCollider Collider { get; set; }
 
-		[field: SerializeField]
-		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
+		[field: SerializeField] private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
 
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
@@ -32,8 +30,10 @@ namespace Controller.Player
 		{
 			return new Bounds
 			{
-				min = new Vector3(groundBounds.min.x + playerCollider.size.x / 2f, groundBounds.min.y, groundBounds.min.z),
-				max = new Vector3(groundBounds.max.x - playerCollider.size.x / 2f, groundBounds.max.y, groundBounds.max.z)
+				min = new Vector3(groundBounds.min.x + playerCollider.size.x / 2f, groundBounds.min.y,
+					groundBounds.min.z),
+				max = new Vector3(groundBounds.max.x - playerCollider.size.x / 2f, groundBounds.max.y,
+					groundBounds.max.z)
 			};
 		}
 
@@ -43,7 +43,7 @@ namespace Controller.Player
 				return;
 
 			// Weapon tick is called here, and the projectiles tick are called on ProjectileManager's Update
-			WeaponArsenalHandler.Tick(Time.deltaTime, transform.position);
+			WeaponArsenalHandler.Tick(Time.deltaTime, true);
 			HandleInput();
 			HandleMovement();
 		}

@@ -30,10 +30,11 @@ namespace Controller.General
 
 			if (!Pools.ContainsKey(key))
 			{
-				CreatePool(key, prefab, parent);
+				CreatePool(key, prefab);
 			}
 
-			var instance = ((ObjectPool<T>) Pools[key]).Get();
+			var instance = ((ObjectPool<T>)Pools[key]).Get();
+			instance.transform.SetParent(parent);
 			instance.transform.SetPositionAndRotation(position, rotation);
 
 			return instance;
@@ -44,22 +45,23 @@ namespace Controller.General
 			var key = prefab.GetInstanceID();
 			if (Pools.TryGetValue(key, out var pool))
 			{
-				((ObjectPool<T>) pool).Release(instance);
+				((ObjectPool<T>)pool).Release(instance);
 			}
 			else
 			{
-				Debug.LogWarning($"No pool found for prefab {prefab.name} when trying to despawn instance {instance.name}.");
+				Debug.LogWarning(
+					$"No pool found for prefab {prefab.name} when trying to despawn instance {instance.name}.");
 				// Fallback
 				Destroy(instance);
 			}
 		}
 
-		private void CreatePool<T>(int key, T prefab, Transform parent) where T : Component
+		private void CreatePool<T>(int key, T prefab) where T : Component
 		{
 			var pool = new ObjectPool<T>(
-				createFunc: () => Instantiate(prefab, parent),
-				actionOnGet: (component) => component.gameObject.SetActive(true),
-				actionOnRelease: (component) => component.gameObject.SetActive(false),
+				createFunc: () => Instantiate(prefab),
+				actionOnGet: component => component.gameObject.SetActive(true),
+				actionOnRelease: component => component.gameObject.SetActive(false),
 				defaultCapacity: DefaultPoolCapacity,
 				maxSize: DefaultPoolMaxSize
 			);

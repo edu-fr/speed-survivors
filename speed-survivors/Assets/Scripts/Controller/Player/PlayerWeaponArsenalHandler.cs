@@ -10,8 +10,7 @@ namespace Controller.Player
 {
 	public class PlayerWeaponArsenalHandler : MonoBehaviour
 	{
-		[field: SerializeField]
-		private List<WeaponInstance> WeaponInstances { get; set; }
+		[field: SerializeField] private List<WeaponInstance> WeaponInstances { get; set; }
 
 		private IPlayer Player { get; set; }
 		private Dictionary<WeaponType, WeaponInstance> WeaponInstancesMap { get; set; }
@@ -23,11 +22,11 @@ namespace Controller.Player
 			CreateAndSetupWeaponArsenal();
 		}
 
-		public void Tick(float deltaTime, Vector3 playerPosition)
+		public void Tick(float deltaTime, bool shouldShoot)
 		{
 			for (var i = 0; i < ActiveWeaponInstances.Count; i++)
 			{
-				ActiveWeaponInstances[i].Tick(deltaTime, playerPosition);
+				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot);
 			}
 		}
 
@@ -56,6 +55,7 @@ namespace Controller.Player
 			{
 				AddWeaponInstance(weaponConfig);
 			}
+
 			Player.Arsenal.SubscribeToWeaponAdded(AddWeaponInstance);
 		}
 
@@ -76,7 +76,8 @@ namespace Controller.Player
 		public void OnDestroy()
 		{
 			if (Player == null)
-				throw new InvalidOperationException("Player reference is null in OnDestroy from PlayerWeaponArsenalHandler.");
+				throw new InvalidOperationException(
+					"Player reference is null in OnDestroy from PlayerWeaponArsenalHandler.");
 
 			Player.Arsenal.UnsubscribeFromWeaponAdded(AddWeaponInstance);
 		}

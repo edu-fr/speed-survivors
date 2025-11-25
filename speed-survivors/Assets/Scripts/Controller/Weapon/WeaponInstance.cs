@@ -16,14 +16,15 @@ namespace Controller.Weapon
 		protected abstract IWeaponStrategy Strategy { get; }
 		public float CurrentCooldown { get; set; }
 
-		public virtual void Tick(float deltaTime, Vector3 origin)
+		public virtual void Tick(float deltaTime, bool shouldShoot)
 		{
 			CurrentCooldown -= deltaTime;
-			if (CurrentCooldown <= 0)
-			{
+
+			if (CurrentCooldown > 0f)
+				return;
+
+			if (shouldShoot)
 				Fire();
-				CurrentCooldown = Config.BaseCooldown;
-			}
 		}
 
 		private void Fire()
@@ -35,6 +36,8 @@ namespace Controller.Weapon
 				Vector3.forward,
 				Config.ProjectileSpeed,
 				Config.BaseDamage);
+
+			CurrentCooldown = Config.BaseCooldown;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using Controller.General;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -6,6 +7,7 @@ namespace Controller.Enemy
 {
 	public class EnemySpawner : MonoBehaviour
 	{
+		private const float SpawnStartDelay = 1f;
 		private const float SpawnInterval = 2f;
 
 		[field: SerializeField]
@@ -25,7 +27,7 @@ namespace Controller.Enemy
 				throw new InvalidOperationException("EnemySpawner is already spawning enemies");
 
 			SpawningEnemies = true;
-			InvokeRepeating(nameof(SpawnEnemy), 1f, SpawnInterval);
+			InvokeRepeating(nameof(SpawnEnemy), SpawnStartDelay, SpawnInterval);
 			Debug.Log("EnemySpawner started");
 		}
 
@@ -42,7 +44,7 @@ namespace Controller.Enemy
 		private void SpawnEnemy()
 		{
 			var spawnPosition = GetRandomPositionInSpawnArea();
-			var enemy = Instantiate(EnemyPrefab, spawnPosition, Quaternion.identity);
+			var enemy = PoolManager.Instance.Spawn(EnemyPrefab, spawnPosition, Quaternion.identity, transform);
 			AdjustEnemyHeightOnFloor(enemy, spawnPosition);
 		}
 
