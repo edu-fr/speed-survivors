@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
+using Domain.Interface.Weapon.Config;
 using Domain.Weapon.Base;
+using Domain.Weapon.Config;
 
 namespace Domain.Player
 {
@@ -27,7 +30,7 @@ namespace Domain.Player
 			MoveSpeed = 2f;
 			BaseDamage = 5f;
 			CurrentHP = MaxHP;
-			Arsenal = new WeaponArsenal();
+			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });
 		}
 	}
 }

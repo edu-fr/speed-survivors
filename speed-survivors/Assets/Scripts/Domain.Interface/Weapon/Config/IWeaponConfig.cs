@@ -8,5 +8,6 @@ namespace Domain.Interface.Weapon.Config
 		float BaseDamage { get; }
 		float Range { get; }
 		float BaseCooldown { get; }
+		float ProjectileSpeed { get; }
 	}
 }

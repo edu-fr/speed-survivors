@@ -8,9 +8,11 @@ namespace Controller.Player
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
 
+		[field: SerializeField]
+		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
+
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
-		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
 		private bool Initialized { get; set; }
 		private IPlayer Player { get; set; }
 
@@ -20,9 +22,8 @@ namespace Controller.Player
 			InputHandler = new PlayerInputHandler(mainCamera);
 			var playerMovementBounds = GetPlayerMovementBounds(groundBounds, Collider);
 			MovementHandler = new PlayerMovementHandler(Player, transform, playerMovementBounds, startingPos.x);
-
 			SetupStartingPosition(startingPos, Collider.size.y);
-			WeaponArsenalHandler = new PlayerWeaponArsenalHandler(Player);
+			WeaponArsenalHandler.Init(Player);
 
 			Initialized = true;
 		}
@@ -41,15 +42,9 @@ namespace Controller.Player
 			if (!Initialized)
 				return;
 
+			// Weapon tick is called here, and the projectiles tick are called on ProjectileManager's Update
+			WeaponArsenalHandler.Tick(Time.deltaTime, transform.position);
 			HandleInput();
-			WeaponArsenalHandler.Tick(transform.position);
-		}
-
-		private void FixedUpdate()
-		{
-			if (!Initialized)
-				return;
-
 			HandleMovement();
 		}
 

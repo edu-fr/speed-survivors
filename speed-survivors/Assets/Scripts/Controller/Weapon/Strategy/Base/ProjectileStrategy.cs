@@ -6,9 +6,13 @@ namespace Controller.Weapon.Strategy.Base
 {
 	public class ProjectileStrategy : IWeaponStrategy
 	{
+		public ProjectileStrategy()
+		{
+			Debug.Log("ProjectileStrategy created");
+		}
+
 		public void Execute(Vector3 origin, IWeaponConfig config)
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }
