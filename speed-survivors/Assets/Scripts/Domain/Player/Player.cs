@@ -27,7 +27,7 @@ namespace Domain.Player
 		public Player() // Debug default player
 		{
 			MaxHP = 100f;
-			MoveSpeed = 2f;
+			MoveSpeed = 10f;
 			BaseDamage = 5f;
 			CurrentHP = MaxHP;
 			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });

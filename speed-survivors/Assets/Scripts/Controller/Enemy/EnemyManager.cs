@@ -8,16 +8,13 @@ namespace Controller.Enemy
 {
 	public class EnemyManager : MonoBehaviour
 	{
-		private const float SpawnCooldown = 0.1f;
+		private const float SpawnCooldown = 1f;
 
 		[field: SerializeField]
 		private EnemyController EnemyPrefab { get; set; }
 
 		[field: SerializeField]
 		private MeshRenderer SpawnArea { get; set; }
-
-		[field: SerializeField]
-		private MeshRenderer Floor { get; set; }
 
 		private List<EnemyController> ActiveEnemies { get; set; }
 
@@ -77,7 +74,7 @@ namespace Controller.Enemy
 			var spawnBounds = SpawnArea.bounds;
 			var spawnX = Random.Range(spawnBounds.min.x, spawnBounds.max.x);
 			var spawnZ = Random.Range(spawnBounds.min.z, spawnBounds.max.z);
-			return new Vector3(spawnX, Floor.bounds.max.y, spawnZ);
+			return new Vector3(spawnX, 0, spawnZ);
 		}
 
 		private void AdjustEnemyHeightOnFloor(EnemyController enemy, Vector3 spawnPosition)

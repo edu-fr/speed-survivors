@@ -16,30 +16,18 @@ namespace Controller.Player
 		private bool Initialized { get; set; }
 		private IPlayer Player { get; set; }
 
-		public void Init(Camera mainCamera, Vector3 startingPos, Bounds groundBounds)
+		public void Init(Camera mainCamera, Vector3 startingPos, float xMoveRange)
 		{
 			Player = new Domain.Player.Player();
 			InputHandler = new PlayerInputHandler(mainCamera);
-			var playerMovementBounds = GetPlayerMovementBounds(groundBounds, Collider);
-			MovementHandler = new PlayerMovementHandler(Player, transform, playerMovementBounds, startingPos.x);
+			MovementHandler = new PlayerMovementHandler(Player, transform, xMoveRange, startingPos.x);
 			SetupStartingPosition(startingPos, Collider.size.y);
 			WeaponArsenalHandler.Init(Player);
 
 			Initialized = true;
 		}
 
-		private Bounds GetPlayerMovementBounds(Bounds groundBounds, BoxCollider playerCollider)
-		{
-			return new Bounds
-			{
-				min = new Vector3(groundBounds.min.x + playerCollider.size.x / 2f, groundBounds.min.y,
-					groundBounds.min.z),
-				max = new Vector3(groundBounds.max.x - playerCollider.size.x / 2f, groundBounds.max.y,
-					groundBounds.max.z)
-			};
-		}
-
-		private void Update()
+		public void Tick(float deltaTime)
 		{
 			if (!Initialized)
 				return;
@@ -48,6 +36,12 @@ namespace Controller.Player
 			WeaponArsenalHandler.Tick(Time.deltaTime, true);
 			HandleInput();
 			HandleMovement();
+			HandleAutoForwardMovement(deltaTime);
+		}
+
+		private void HandleAutoForwardMovement(float deltaTime)
+		{
+			MovementHandler.UpdateCurrentZTargetPosition(transform.position.z + Player.MoveSpeed * deltaTime);
 		}
 
 		private void HandleInput()
@@ -55,7 +49,7 @@ namespace Controller.Player
 			if (!InputHandler.GetTargetInputPosition(out var touchWorldPosition))
 				return;
 
-			MovementHandler.UpdateCurrentTargetPosition(touchWorldPosition.x);
+			MovementHandler.UpdateCurrentXTargetPosition(touchWorldPosition.x);
 		}
 
 		private void HandleMovement()

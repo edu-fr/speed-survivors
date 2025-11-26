@@ -8,7 +8,7 @@ namespace Domain.Weapon.Config
 		public WeaponType WeaponType => WeaponType.PeaShooter;
 		public float BaseDamage => 5;
 		public float Range => 20;
-		public float BaseCooldown => 0.004f;
+		public float BaseCooldown => 0.4f;
 		public float ProjectileSpeed => 3f;
 	}
 }
