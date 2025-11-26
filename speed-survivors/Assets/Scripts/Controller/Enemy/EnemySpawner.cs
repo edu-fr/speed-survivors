@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Controller.General;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -45,6 +46,8 @@ namespace Controller.Enemy
 		{
 			var spawnPosition = GetRandomPositionInSpawnArea();
 			var enemy = PoolManager.Instance.Spawn(EnemyPrefab, spawnPosition, Quaternion.identity, transform);
+			enemy.Initialize();
+			enemy.SubscribeToDeathEvent(OnEnemyDeath);
 			AdjustEnemyHeightOnFloor(enemy, spawnPosition);
 		}
 
@@ -59,6 +62,20 @@ namespace Controller.Enemy
 		private void AdjustEnemyHeightOnFloor(EnemyController enemy, Vector3 spawnPosition)
 		{
 			enemy.SetPosition(spawnPosition + new Vector3(0, enemy.GetHeight() / 2f, 0));
+		}
+
+		private void OnEnemyDeath(EnemyController enemyController)
+		{
+			Debug.Log($"Enemy {enemyController.name} dead!");
+
+			DespawnEnemy(enemyController);
+		}
+
+		private void DespawnEnemy(EnemyController enemyController)
+		{
+			// Dying animation?
+			enemyController.UnsubscribeFromDeathEvent(OnEnemyDeath);
+			PoolManager.Instance.Despawn(EnemyPrefab, enemyController);
 		}
 	}
 }

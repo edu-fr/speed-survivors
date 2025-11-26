@@ -45,18 +45,11 @@ namespace Controller.Weapon.Ammo
 			ActiveProjectiles.Add(projectile);
 		}
 
-		public void DespawnProjectile(Projectile projectile, int indexInList = -1)
+		private void DespawnProjectile(Projectile projectile, int indexInList)
 		{
-			if (indexInList != -1)
-			{
-				int lastIndex = ActiveProjectiles.Count - 1;
-				ActiveProjectiles[indexInList] = ActiveProjectiles[lastIndex];
-				ActiveProjectiles.RemoveAt(lastIndex);
-			}
-			else
-			{
-				ActiveProjectiles.Remove(projectile);
-			}
+			var lastIndex = ActiveProjectiles.Count - 1;
+			ActiveProjectiles[indexInList] = ActiveProjectiles[lastIndex];
+			ActiveProjectiles.RemoveAt(lastIndex);
 
 			PoolManager.Instance.Despawn(projectile.Prefab, projectile);
 		}

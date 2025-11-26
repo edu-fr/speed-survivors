@@ -10,6 +10,7 @@ namespace Controller.General
 		public const int DefaultPoolMaxSize = 1000;
 		public static PoolManager Instance { get; set; }
 		private Dictionary<int, object> Pools { get; set; }
+		private int Counter { get; set; }
 
 		private void Awake()
 		{
@@ -59,7 +60,14 @@ namespace Controller.General
 		private void CreatePool<T>(int key, T prefab) where T : Component
 		{
 			var pool = new ObjectPool<T>(
-				createFunc: () => Instantiate(prefab),
+				createFunc: () =>
+				{
+					Counter++;
+					var instance = Instantiate(prefab);
+					instance.gameObject.name += Counter.ToString();
+
+					return instance;
+				},
 				actionOnGet: component => component.gameObject.SetActive(true),
 				actionOnRelease: component => component.gameObject.SetActive(false),
 				defaultCapacity: DefaultPoolCapacity,
