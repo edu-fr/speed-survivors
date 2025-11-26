@@ -6,7 +6,7 @@ namespace Controller.Weapon.Ammo
 {
 	public class ProjectileManager : MonoBehaviour
 	{
-		private const float ProjectileLifetime = 4f;
+		private const float ProjectileLifetime = 10f;
 
 		[field: SerializeField]
 		private Transform ProjectilePoolParent { get; set; }

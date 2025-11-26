@@ -460,7 +460,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 92b2c3467ae469c4ab1a10846126cea5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -566,7 +566,6 @@ GameObject:
   - component: {fileID: 1499595644}
   - component: {fileID: 1499595646}
   - component: {fileID: 1499595645}
-  - component: {fileID: 1499595647}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -583,8 +582,8 @@ Transform:
   m_GameObject: {fileID: 1499595643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 14.82}
-  m_LocalScale: {x: 5.0000997, y: 2, z: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 20}
+  m_LocalScale: {x: 5, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 179328851}
@@ -611,10 +610,10 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 0
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 92b2c3467ae469c4ab1a10846126cea5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -645,21 +644,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499595643}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1499595647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499595643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c501bd3b8b9fba64db041fca0ed6ccdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Controller::Controller.Enemy.EnemySpawner
-  <EnemyPrefab>k__BackingField: {fileID: 8061547642615952409, guid: 2118e5b9dcd437a4da3aeef375df75e7, type: 3}
-  <SpawnArea>k__BackingField: {fileID: 1499595645}
-  <Floor>k__BackingField: {fileID: 455170702}
 --- !u!1 &1531027888
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +707,7 @@ MonoBehaviour:
   <MainCamera>k__BackingField: {fileID: 330585545}
   <StartingPoint>k__BackingField: {fileID: 1531027889}
   <PlayerPrefab>k__BackingField: {fileID: 1000655718427347625, guid: b6fdd05a67722054f87524d20d94f3ab, type: 3}
-  <EnemySpawner>k__BackingField: {fileID: 1499595647}
+  <EnemyManager>k__BackingField: {fileID: 3334982889174923614}
   <Ground>k__BackingField: {fileID: 455170702}
 --- !u!4 &2035808848
 Transform:
@@ -819,6 +803,82 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3334982889174923613
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1367373924734860070, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_Name
+      value: EnemyManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3355870717607773852, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: <Floor>k__BackingField
+      value: 
+      objectReference: {fileID: 455170702}
+    - target: {fileID: 3355870717607773852, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: <SpawnArea>k__BackingField
+      value: 
+      objectReference: {fileID: 1499595645}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907832906174481626, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+--- !u!114 &3334982889174923614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3355870717607773852, guid: 1e5a421d512d1b94795f63de5f1884a8, type: 3}
+  m_PrefabInstance: {fileID: 3334982889174923613}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c501bd3b8b9fba64db041fca0ed6ccdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Controller::Controller.Enemy.EnemySpawner
 --- !u!1001 &6014344988802098250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -928,6 +988,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Projectile Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 377748364582198908, guid: 4ba7416528a9b884e939401cab2243ac, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2861638228856862138, guid: 4ba7416528a9b884e939401cab2243ac, type: 3}
       propertyPath: <ProjectilePoolParent>k__BackingField
       value: 
@@ -947,6 +1011,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2035808848}
+  - {fileID: 3334982889174923613}
   - {fileID: 6014344988802098250}
   - {fileID: 8670602543110659152}
   - {fileID: 330585546}

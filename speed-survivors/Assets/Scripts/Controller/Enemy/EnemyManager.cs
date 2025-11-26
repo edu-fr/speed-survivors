@@ -6,10 +6,9 @@ using Random = UnityEngine.Random;
 
 namespace Controller.Enemy
 {
-	public class EnemySpawner : MonoBehaviour
+	public class EnemyManager : MonoBehaviour
 	{
-		private const float SpawnStartDelay = 1f;
-		private const float SpawnInterval = 2f;
+		private const float SpawnCooldown = 0.1f;
 
 		[field: SerializeField]
 		private EnemyController EnemyPrefab { get; set; }
@@ -20,26 +19,48 @@ namespace Controller.Enemy
 		[field: SerializeField]
 		private MeshRenderer Floor { get; set; }
 
-		private bool SpawningEnemies { get; set; }
+		private List<EnemyController> ActiveEnemies { get; set; }
 
-		public void StartSpawningEnemies()
+		private float CurrentTimer { get; set; }
+		private bool SpawningActive { get; set; }
+
+		public void Tick(float deltaTime)
 		{
-			if (SpawningEnemies)
-				throw new InvalidOperationException("EnemySpawner is already spawning enemies");
-
-			SpawningEnemies = true;
-			InvokeRepeating(nameof(SpawnEnemy), SpawnStartDelay, SpawnInterval);
-			Debug.Log("EnemySpawner started");
+			SpawnLoop(deltaTime);
+			ActiveEnemiesLoop();
 		}
 
-		public void StopSpawningEnemies()
+		public void StartSpawn()
 		{
-			if (!SpawningEnemies)
-				throw new InvalidOperationException("EnemySpawner is not currently spawning enemies");
+			if (SpawningActive)
+				throw new InvalidOperationException("Enemy spawn already active");
 
-			SpawningEnemies = false;
-			CancelInvoke(nameof(SpawnEnemy));
-			Debug.Log("EnemySpawner stopped");
+			ActiveEnemies = new List<EnemyController>();
+			SpawningActive = true;
+		}
+
+		private void SpawnLoop(float deltaTime)
+		{
+			if (!SpawningActive)
+				return;
+
+			CurrentTimer += deltaTime;
+			if (CurrentTimer < SpawnCooldown)
+				return;
+
+			CurrentTimer = 0f;
+			SpawnEnemy();
+		}
+
+		private void ActiveEnemiesLoop()
+		{
+			for (var i = ActiveEnemies.Count - 1; i >= 0; i--)
+			{
+				if (!ActiveEnemies[i].Tick())
+				{
+					DespawnEnemy(ActiveEnemies[i], i);
+				}
+			}
 		}
 
 		private void SpawnEnemy()
@@ -47,7 +68,7 @@ namespace Controller.Enemy
 			var spawnPosition = GetRandomPositionInSpawnArea();
 			var enemy = PoolManager.Instance.Spawn(EnemyPrefab, spawnPosition, Quaternion.identity, transform);
 			enemy.Initialize();
-			enemy.SubscribeToDeathEvent(OnEnemyDeath);
+			ActiveEnemies.Add(enemy);
 			AdjustEnemyHeightOnFloor(enemy, spawnPosition);
 		}
 
@@ -64,17 +85,13 @@ namespace Controller.Enemy
 			enemy.SetPosition(spawnPosition + new Vector3(0, enemy.GetHeight() / 2f, 0));
 		}
 
-		private void OnEnemyDeath(EnemyController enemyController)
+		private void DespawnEnemy(EnemyController enemyController, int index)
 		{
-			Debug.Log($"Enemy {enemyController.name} dead!");
+			var lastIndex = ActiveEnemies.Count - 1;
+			ActiveEnemies[index] = ActiveEnemies[lastIndex];
+			ActiveEnemies.RemoveAt(lastIndex);
 
-			DespawnEnemy(enemyController);
-		}
-
-		private void DespawnEnemy(EnemyController enemyController)
-		{
 			// Dying animation?
-			enemyController.UnsubscribeFromDeathEvent(OnEnemyDeath);
 			PoolManager.Instance.Despawn(EnemyPrefab, enemyController);
 		}
 	}

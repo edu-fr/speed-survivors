@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
 
@@ -14,8 +13,6 @@ namespace Domain.Weapon.Base
 		public WeaponArsenal(IList<IWeaponConfig> startingWeapons = null)
 		{
 			ActiveWeapons = new List<IWeaponConfig>(startingWeapons ?? new List<IWeaponConfig>());
-
-			Debugger.Log(0, "WeaponArsenal", $"Initialized with {ActiveWeapons.Count} weapons.");
 		}
 
 		public void AddWeapon(IWeaponConfig weaponConfig)

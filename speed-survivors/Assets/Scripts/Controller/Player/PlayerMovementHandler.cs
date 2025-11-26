@@ -24,8 +24,8 @@ namespace Controller.Player
 		{
 			var clampedX = Mathf.Clamp(CurrentTargetPositionX, MovementBounds.min.x, MovementBounds.max.x);
 			var target = new Vector3(clampedX, Transform.position.y, Transform.position.z);
-			Transform.position = Vector3.SmoothDamp(Transform.position, target, ref _currentVelocity,
-				GetPlayerSpeedAsSmoothTime());
+			Transform.position = Vector3.SmoothDamp(
+				Transform.position, target, ref _currentVelocity, GetPlayerSpeedAsSmoothTime());
 		}
 
 		public void UpdateCurrentTargetPosition(float worldPositionX)
@@ -35,10 +35,6 @@ namespace Controller.Player
 
 		private float GetPlayerSpeedAsSmoothTime()
 		{
-			if (Player == null)
-				throw new System.InvalidOperationException(
-					"PlayerMovementHandler: Player is null when getting speed as smooth time.");
-
 			return SpeedToSmoothTime(Player.MoveSpeed);
 		}
 

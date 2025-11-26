@@ -16,15 +16,21 @@ namespace Controller.SceneController
 		private PlayerController PlayerPrefab { get; set; }
 
 		[field: SerializeField]
-		private EnemySpawner EnemySpawner { get; set; }
+		private EnemyManager EnemyManager { get; set; }
 
 		[field: SerializeField]
 		private MeshRenderer Ground { get; set; }
 
-		void Start()
+		private void Start()
 		{
 			SpawnPlayer();
-			EnemySpawner.StartSpawningEnemies();
+			EnemyManager.StartSpawn();
+		}
+
+		private void Update()
+		{
+			var deltaTime = Time.deltaTime;
+			EnemyManager.Tick(deltaTime);
 		}
 
 		private void SpawnPlayer()

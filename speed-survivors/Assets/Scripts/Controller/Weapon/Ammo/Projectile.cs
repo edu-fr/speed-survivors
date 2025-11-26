@@ -1,15 +1,15 @@
+using System.Diagnostics;
 using Controller.Interface.General;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Controller.Weapon.Ammo
 {
 	public class Projectile : MonoBehaviour
 	{
-		[field: SerializeField]
-		private LayerMask DamageableHurtBoxLayer { get; set; }
+		[field: SerializeField] private LayerMask DamageableHurtBoxLayer { get; set; }
 
-		[field: SerializeField]
-		private MeshRenderer MeshRenderer { get; set; }
+		[field: SerializeField] private MeshRenderer MeshRenderer { get; set; }
 
 		public Projectile Prefab { get; private set; }
 		private float Lifetime { get; set; }
@@ -32,9 +32,9 @@ namespace Controller.Weapon.Ammo
 
 		public bool Tick(float deltaTime)
 		{
-			Lifetime -= deltaTime;
+			CurrentTimer -= deltaTime;
 
-			if (Lifetime <= 0f)
+			if (CurrentTimer <= 0f)
 				return false;
 
 			var previousPosition = transform.position;
@@ -50,17 +50,13 @@ namespace Controller.Weapon.Ammo
 				DamageableHurtBoxLayer.value
 			);
 
-#if UNITY_EDITOR
-			Color debugColor = hits > 0 ? Color.red : Color.green;
-			Debug.DrawLine(previousPosition, nextPos, debugColor, 0.5f);
-#endif
+			// ShowDebugRaycastHit(hits, previousPosition, nextPos);
 
 			if (hits > 0)
 			{
-				RaycastHit hitInfo = RaycastResults[0];
-
-				HandleHit(hitInfo.collider);
-				return false;
+				var hitInfo = RaycastResults[0];
+				if (HandleHit(hitInfo.collider))
+					return false;
 			}
 
 			// Se não bateu, move a bala visualmente
@@ -70,9 +66,20 @@ namespace Controller.Weapon.Ammo
 			return true;
 		}
 
-		private void HandleHit(Collider hitCollider)
+		[Conditional("UNITY_EDITOR")]
+		private void ShowDebugRaycastHit(int hits, Vector3 previousPosition, Vector3 nextPos)
 		{
-			hitCollider.GetComponentInParent<IHitable>()?.TakeHit(Damage);
+			Color debugColor = hits > 0 ? Color.red : Color.green;
+			Debug.DrawLine(previousPosition, nextPos, debugColor, 0.5f);
+		}
+
+		private bool HandleHit(Collider hitCollider)
+		{
+			var hitable = hitCollider.GetComponentInParent<IHitable>();
+			if (hitable == null)
+				return false;
+
+			return hitable.TakeHit(Damage);
 		}
 	}
 }

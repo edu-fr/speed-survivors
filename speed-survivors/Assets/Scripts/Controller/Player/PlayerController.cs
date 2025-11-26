@@ -5,9 +5,11 @@ namespace Controller.Player
 {
 	public class PlayerController : MonoBehaviour
 	{
-		[field: SerializeField] private BoxCollider Collider { get; set; }
+		[field: SerializeField]
+		private BoxCollider Collider { get; set; }
 
-		[field: SerializeField] private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
+		[field: SerializeField]
+		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
 
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }

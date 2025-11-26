@@ -24,9 +24,11 @@ namespace Controller.Enemy
 			OnDeath = null;
 		}
 
-		private void FixedUpdate()
+		public bool Tick()
 		{
 			HandleMovement();
+
+			return !Enemy.IsDead();
 		}
 
 		private void HandleMovement()
@@ -47,12 +49,10 @@ namespace Controller.Enemy
 			transform.position = position;
 		}
 
-		public void TakeHit(float damage)
+		public bool TakeHit(float damage)
 		{
-			Debug.Log($"Enemy {gameObject.name} hurt for { damage.ToString() } damage");
-
 			if (Enemy.IsDead())
-				throw new InvalidOperationException("Cannot damage a dead enemy. Likely cause: multiple damage events in one frame.");
+				return false;
 
 			Enemy.TakeDamage(damage);
 			StoppedByGettingHit = true;
@@ -60,6 +60,8 @@ namespace Controller.Enemy
 
 			if (Enemy.IsDead())
 				OnDeath?.Invoke(this);
+
+			return true;
 		}
 
 		private void ResetMovement()
