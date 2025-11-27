@@ -20,20 +20,46 @@ namespace Controller.Enemy
 
 		private float CurrentTimer { get; set; }
 		private bool SpawningActive { get; set; }
+		private Transform TransformToFollow { get; set; }
+		private bool Initialized { get; set; }
+
+		private Vector3 _currentVelocity;
+		private Vector3 Offset { get; set; }
+		private const float SmoothTime = 0.2f;
+		private bool SpawnerShouldAccompanyTargetZ { get; set; }
+
+		public void Init(Transform transformToFollow)
+		{
+			TransformToFollow = transformToFollow;
+			var spawnAreaTransform = SpawnArea.transform;
+			Offset = spawnAreaTransform.position - transformToFollow.position; // This make sure that will use the current Scene offset
+
+			Initialized = true;
+		}
 
 		public void Tick(float deltaTime)
 		{
+			CheckInit();
+
 			SpawnLoop(deltaTime);
 			ActiveEnemiesLoop();
 		}
 
+		public void LateUpdate()
+		{
+			AccompanyTargetZ();
+		}
+
 		public void StartSpawn()
 		{
+			CheckInit();
+
 			if (SpawningActive)
 				throw new InvalidOperationException("Enemy spawn already active");
 
 			ActiveEnemies = new List<EnemyController>();
 			SpawningActive = true;
+			SpawnerShouldAccompanyTargetZ = true;
 		}
 
 		private void SpawnLoop(float deltaTime)
@@ -90,6 +116,29 @@ namespace Controller.Enemy
 
 			// Dying animation?
 			PoolManager.Instance.Despawn(EnemyPrefab, enemyController);
+		}
+
+		private void AccompanyTargetZ()
+		{
+			if (!SpawnerShouldAccompanyTargetZ)
+				return;
+
+			CheckInit();
+
+			var spawnAreaTransform = SpawnArea.transform;
+			var desiredPosition = TransformToFollow.position + Offset;
+			spawnAreaTransform.position = Vector3.SmoothDamp(
+				spawnAreaTransform.position,
+				new Vector3(spawnAreaTransform.position.x, spawnAreaTransform.position.y, desiredPosition.z),
+				ref _currentVelocity,
+				SmoothTime
+			);
+		}
+
+		private void CheckInit()
+		{
+			if (!Initialized)
+				throw new InvalidOperationException("EnemyManager not initialized. Call Init() before using it.");
 		}
 	}
 }

@@ -31,10 +31,12 @@ namespace Controller.SceneController
 		private void Start()
 		{
 			SpawnPlayer();
-			WorldManager.Init(PlayerController.transform);
+			var playerTransform = PlayerController.transform;
+			WorldManager.Init(playerTransform);
 			WorldManager.SpawnInitialWorldSections();
-			CameraController.Init(PlayerController.transform);
+			CameraController.Init(playerTransform);
 			CameraController.StartFollowing();
+			EnemyManager.Init(playerTransform);
 			EnemyManager.StartSpawn();
 		}
 

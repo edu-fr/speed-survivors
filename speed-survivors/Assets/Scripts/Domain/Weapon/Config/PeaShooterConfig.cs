@@ -9,6 +9,6 @@ namespace Domain.Weapon.Config
 		public float BaseDamage => 5;
 		public float Range => 20;
 		public float BaseCooldown => 0.4f;
-		public float ProjectileSpeed => 3f;
+		public float ProjectileSpeed => 10f;
 	}
 }

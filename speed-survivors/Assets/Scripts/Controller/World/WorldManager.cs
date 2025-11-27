@@ -8,8 +8,9 @@ namespace Controller.World
 {
 	public class WorldManager : MonoBehaviour
 	{
-		private const int InitialSegments = 5;
-		private const float DespawnDistance = 5f;
+		private const int InitialSegments = 3;
+		private const float DistanceToOldestSegmentNecessaryToDespawnIt = 10f;
+		private const float DistanceToSpawnNewSegment = 150f;
 
 		[field: SerializeField]
 		private WorldSection[] SectionPrefabs { get; set; }
@@ -47,20 +48,22 @@ namespace Controller.World
 		{
 			CheckInit();
 
-			if (PlayerTransform.position.z > _currentConnectionZ - 100f)
+			var distanceToCurrent = _currentConnectionZ - PlayerTransform.position.z;
+			if (distanceToCurrent < DistanceToSpawnNewSegment)
 			{
 				SpawnNextSection();
 			}
 
-			if (ActiveSections.Count > 0)
-			{
-				var oldest = ActiveSections.Peek();
+			if (ActiveSections.Count <= 0)
+				throw new InvalidOperationException("No active world sections. This should never happen.");
 
-				// Check distance from player to the oldest section
-				if (PlayerTransform.position.z - oldest.instance.transform.position.z > DespawnDistance)
-				{
-					RemoveOldestSection();
-				}
+			var oldestSectionSpawned = ActiveSections.Peek();
+			var oldestSizeZ = oldestSectionSpawned.prefab.SectionTransformSize.z;
+			var oldestMaxZ = oldestSectionSpawned.instance.transform.position.z + (oldestSizeZ / 2f);
+			var distanceToOldest = PlayerTransform.position.z - oldestMaxZ;
+			if (distanceToOldest > DistanceToOldestSegmentNecessaryToDespawnIt)
+			{
+				RemoveOldestSection();
 			}
 		}
 
@@ -70,7 +73,7 @@ namespace Controller.World
 			var instance = PoolManager.Instance.Spawn(prefab, Vector3.zero, Quaternion.identity, WorldParent);
 			ActiveSections = new Queue<(WorldSection prefab, WorldSection instance)>();
 			ActiveSections.Enqueue(new(prefab, instance));
-			_currentConnectionZ = instance.SectionTransformSize.z / 2f;
+			_currentConnectionZ = prefab.SectionTransformSize.z / 2f;
 		}
 
 		private void SpawnNextSection()

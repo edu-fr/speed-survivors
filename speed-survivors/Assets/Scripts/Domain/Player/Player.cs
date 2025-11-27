@@ -29,8 +29,8 @@ namespace Domain.Player
 		public Player() // Debug default player
 		{
 			MaxHP = 100f;
-			LateralLateralMoveSpeed = 10f;
-			ForwardMoveSpeed = 2f;
+			LateralLateralMoveSpeed = 30f;
+			ForwardMoveSpeed = 5f;
 			BaseDamage = 5f;
 			CurrentHP = MaxHP;
 			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });
