@@ -10,7 +10,12 @@ namespace Domain.Interface.Player
 		/// Starting at 10, and increasing linearly up to 50.
 		/// In the player movement handler, translates to SmoothDamp movement from 0.2s up to 0.05s.
 		/// </summary>
-		float MoveSpeed { get; }
+		float LateralLateralMoveSpeed { get; }
+
+		/// <summary>
+		/// Starting at 2, and increasing linearly up to 10.
+		/// </summary>
+		float ForwardMoveSpeed { get; }
 
 		float BaseDamage { get; }
 		float CurrentHP { get; }

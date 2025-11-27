@@ -5,43 +5,58 @@ namespace Controller.Player
 {
 	public class PlayerMovementHandler
 	{
+		public float CurrentForwardVelocity => _currentVelocity.z;
 		private IPlayer Player { get; set; }
 		private Transform Transform { get; set; }
 		private float XMoveRange { get; set; }
 		private Vector3 _currentVelocity;
-		private float CurrentTargetPositionX { get; set; }
-		private float CurrentTargetPositionZ { get; set; }
+		private float TargetPositionX { get; set; }
 
 		public PlayerMovementHandler(IPlayer player, Transform playerTransform, float xMoveRange, float startingPointX)
 		{
 			Player = player;
 			Transform = playerTransform;
 			XMoveRange = xMoveRange;
-			CurrentTargetPositionX = startingPointX;
-			CurrentTargetPositionZ = playerTransform.position.z;
+			TargetPositionX = startingPointX;
 		}
 
-		public void MovePlayerTowardsCurrentTargetPosition()
+		public void UpdateInputTargetX(float inputWorldPositionX)
 		{
-			var clampedX = Mathf.Clamp(CurrentTargetPositionX, -XMoveRange, XMoveRange);
-			var target = new Vector3(clampedX, Transform.position.y, CurrentTargetPositionZ);
-			Transform.position = Vector3.SmoothDamp(
-				Transform.position, target, ref _currentVelocity, GetPlayerSpeedAsSmoothTime());
+			TargetPositionX = ClampTargetPositionToLane(inputWorldPositionX);
 		}
 
-		public void UpdateCurrentXTargetPosition(float worldPositionX)
+		public void TickMovement(float deltaTime)
 		{
-			CurrentTargetPositionX = worldPositionX;
+			var nextX = CalculateNextLateralPosition();
+			var nextZ = CalculateNextForwardPosition(deltaTime);
+
+			ApplyNextPosition(nextX, nextZ);
 		}
 
-		public void UpdateCurrentZTargetPosition(float worldPositionZ)
+		private float CalculateNextLateralPosition()
 		{
-			CurrentTargetPositionZ = worldPositionZ;
+			var currentX = Transform.position.x;
+			var smoothTime = CalculateSmoothTimeBasedOnSpeed(Player.LateralLateralMoveSpeed);
+
+			var nextX = Vector3.SmoothDamp(new Vector3(currentX, 0, 0), new Vector3(TargetPositionX, 0, 0),
+				ref _currentVelocity, smoothTime).x;
+
+			return nextX;
 		}
 
-		private float GetPlayerSpeedAsSmoothTime()
+		private float CalculateNextForwardPosition(float deltaTime)
 		{
-			return SpeedToSmoothTime(Player.MoveSpeed);
+			return Transform.position.z + (Player.ForwardMoveSpeed * deltaTime);
+		}
+
+		private void ApplyNextPosition(float x, float z)
+		{
+			Transform.position = new Vector3(x, Transform.position.y, z);
+		}
+
+		private float ClampTargetPositionToLane(float rawX)
+		{
+			return Mathf.Clamp(rawX, -XMoveRange, XMoveRange);
 		}
 
 		/// <summary>
@@ -50,7 +65,7 @@ namespace Controller.Player
 		/// Speed increases linearly up to 50, which translates to 0.05 smooth time.
 		/// Beyond that, smooth time remains constant at 0.05.
 		/// </summary>
-		private float SpeedToSmoothTime(float speed)
+		private float CalculateSmoothTimeBasedOnSpeed(float speed)
 		{
 			switch (speed)
 			{
@@ -62,7 +77,6 @@ namespace Controller.Player
 
 				default:
 				{
-					// Linear interpolation between 0.2 and 0.05
 					var t = (speed - 10f) / (50f - 10f);
 					return Mathf.Lerp(0.2f, 0.05f, t);
 				}

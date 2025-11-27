@@ -7,7 +7,7 @@ namespace Controller.World
 		[Header("References")]
 		[field: SerializeField]
 		private Transform GroundObject { get; set; }
-		public float SizeZ { get; private set; }
+		public Vector3 SectionTransformSize { get; set; }
 		private MeshFilter ActiveMeshFilter { get; set; }
 
 		private void Awake()
@@ -31,9 +31,14 @@ namespace Controller.World
 				return;
 			}
 
+			var rawMeshSizeX = ActiveMeshFilter.sharedMesh.bounds.size.x;
+			var rawMeshSizeY = ActiveMeshFilter.sharedMesh.bounds.size.y;
 			var rawMeshSizeZ = ActiveMeshFilter.sharedMesh.bounds.size.z;
-			var localScaleZ = GroundObject.localScale.z;
-			SizeZ = rawMeshSizeZ * localScaleZ * transform.localScale.z;
+			var sizeX = rawMeshSizeX * GroundObject.localScale.x * transform.localScale.x;
+			var sizeY = rawMeshSizeY * GroundObject.localScale.y * transform.localScale.y;
+			var sizeZ = rawMeshSizeZ * GroundObject.localScale.z * transform.localScale.z;
+
+			SectionTransformSize = new Vector3(sizeX, sizeY, sizeZ);
 		}
 	}
 }

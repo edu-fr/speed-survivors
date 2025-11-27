@@ -16,7 +16,7 @@ namespace Controller.Weapon
 		protected abstract IWeaponStrategy Strategy { get; }
 		public float CurrentCooldown { get; set; }
 
-		public virtual void Tick(float deltaTime, bool shouldShoot)
+		public virtual void Tick(float deltaTime, bool shouldShoot, float transformCurrentVelocity)
 		{
 			CurrentCooldown -= deltaTime;
 
@@ -24,17 +24,17 @@ namespace Controller.Weapon
 				return;
 
 			if (shouldShoot)
-				Fire();
+				Fire(transformCurrentVelocity);
 		}
 
-		private void Fire()
+		private void Fire(float transformCurrentVelocity)
 		{
 			// Strategy.Execute(origin, Config); ?
 			ProjectileManager.Instance.SpawnProjectile(
 				ProjectilePrefab,
 				transform.position,
 				Vector3.forward,
-				Config.ProjectileSpeed,
+				transformCurrentVelocity + Config.ProjectileSpeed,
 				Config.BaseDamage);
 
 			CurrentCooldown = Config.BaseCooldown;

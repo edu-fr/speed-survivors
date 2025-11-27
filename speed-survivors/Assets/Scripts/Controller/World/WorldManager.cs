@@ -17,6 +17,7 @@ namespace Controller.World
 		[field: SerializeField]
 		private Transform WorldParent { get; set; }
 
+		public Vector3 DefaultSegmentTransformSize => SectionPrefabs[0].SectionTransformSize;
 		private Transform PlayerTransform { get; set; }
 		private Queue<(WorldSection prefab, WorldSection instance)> ActiveSections { get; set; }
 
@@ -27,6 +28,7 @@ namespace Controller.World
 		public void Init(Transform playerControllerRef)
 		{
 			PlayerTransform = playerControllerRef;
+
 			Initialized = true;
 		}
 
@@ -68,17 +70,17 @@ namespace Controller.World
 			var instance = PoolManager.Instance.Spawn(prefab, Vector3.zero, Quaternion.identity, WorldParent);
 			ActiveSections = new Queue<(WorldSection prefab, WorldSection instance)>();
 			ActiveSections.Enqueue(new(prefab, instance));
-			_currentConnectionZ = instance.SizeZ / 2f;
+			_currentConnectionZ = instance.SectionTransformSize.z / 2f;
 		}
 
 		private void SpawnNextSection()
 		{
 			var prefab = SectionPrefabs[Random.Range(0, SectionPrefabs.Length)];
-			var halfSize = prefab.SizeZ / 2f;
+			var halfSize = prefab.SectionTransformSize.z / 2f;
 			var spawnPos = new Vector3(0, 0, _currentConnectionZ + halfSize);
 			var instance = PoolManager.Instance.Spawn(prefab, spawnPos, Quaternion.identity, WorldParent);
 			ActiveSections.Enqueue(new(prefab, instance));
-			_currentConnectionZ += prefab.SizeZ;
+			_currentConnectionZ += prefab.SectionTransformSize.z;
 		}
 
 		private void RemoveOldestSection()

@@ -22,11 +22,11 @@ namespace Controller.Player
 			CreateAndSetupWeaponArsenal();
 		}
 
-		public void Tick(float deltaTime, bool shouldShoot)
+		public void Tick(float deltaTime, bool shouldShoot, float transformCurrentForwardVelocity)
 		{
 			for (var i = 0; i < ActiveWeaponInstances.Count; i++)
 			{
-				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot);
+				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot, transformCurrentForwardVelocity);
 			}
 		}
 

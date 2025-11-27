@@ -21,7 +21,8 @@ namespace Controller.Player
 			Player = new Domain.Player.Player();
 			InputHandler = new PlayerInputHandler(mainCamera);
 			MovementHandler = new PlayerMovementHandler(Player, transform, xMoveRange, startingPos.x);
-			SetupStartingPosition(startingPos, Collider.size.y);
+
+			SetupStartingPosition(startingPos);
 			WeaponArsenalHandler.Init(Player);
 
 			Initialized = true;
@@ -32,39 +33,38 @@ namespace Controller.Player
 			if (!Initialized)
 				return;
 
-			// Weapon tick is called here, and the projectiles tick are called on ProjectileManager's Update
-			WeaponArsenalHandler.Tick(Time.deltaTime, true);
-			HandleInput();
-			HandleMovement();
-			HandleAutoForwardMovement(deltaTime);
-		}
+			WeaponArsenalHandler.Tick(deltaTime, true, MovementHandler.CurrentForwardVelocity);
 
-		private void HandleAutoForwardMovement(float deltaTime)
-		{
-			MovementHandler.UpdateCurrentZTargetPosition(transform.position.z + Player.MoveSpeed * deltaTime);
+			HandleInput();
+			HandleMovement(deltaTime);
 		}
 
 		private void HandleInput()
 		{
-			if (!InputHandler.GetTargetInputPosition(out var touchWorldPosition))
-				return;
-
-			MovementHandler.UpdateCurrentXTargetPosition(touchWorldPosition.x);
+			if (InputHandler.TryGetTouchWorldPosition(out var touchWorldPosition))
+			{
+				MovementHandler.UpdateInputTargetX(touchWorldPosition.x);
+			}
 		}
 
-		private void HandleMovement()
+		private void HandleMovement(float deltaTime)
 		{
-			MovementHandler.MovePlayerTowardsCurrentTargetPosition();
+			MovementHandler.TickMovement(deltaTime);
 		}
 
-		private void SetupStartingPosition(Vector3 startingPos, float playerHeight)
+		private void SetupStartingPosition(Vector3 startingPos)
 		{
-			transform.position = startingPos + new Vector3(0, playerHeight / 2f, 0);
+			var heightOffset = Collider != null ? Collider.size.y / 2f : 1f;
+			transform.position = startingPos + new Vector3(0, heightOffset, 0);
 		}
 
 		private void OnDestroy()
 		{
-			WeaponArsenalHandler.OnDestroy();
+			if (InputHandler != null)
+				InputHandler.DisableInput();
+
+			if (WeaponArsenalHandler != null)
+				WeaponArsenalHandler.OnDestroy();
 		}
 	}
 }

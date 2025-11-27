@@ -49,7 +49,7 @@ namespace Controller.SceneController
 		private void SpawnPlayer()
 		{
 			PlayerController = Instantiate(PlayerPrefab);
-			PlayerController.Init(MainCamera, StartingPoint.position, 5f);
+			PlayerController.Init(MainCamera, StartingPoint.position, WorldManager.DefaultSegmentTransformSize.x / 2f);
 		}
 	}
 }
