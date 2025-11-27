@@ -1,4 +1,5 @@
 using Controller.Enemy;
+using Controller.General;
 using Controller.Player;
 using Controller.World;
 using UnityEngine;
@@ -22,6 +23,9 @@ namespace Controller.SceneController
 		[field: SerializeField]
 		private WorldManager WorldManager { get; set; }
 
+		[field: SerializeField]
+		private CameraController CameraController { get; set; }
+
 		private PlayerController PlayerController { get; set; }
 
 		private void Start()
@@ -29,6 +33,8 @@ namespace Controller.SceneController
 			SpawnPlayer();
 			WorldManager.Init(PlayerController.transform);
 			WorldManager.SpawnInitialWorldSections();
+			CameraController.Init(PlayerController.transform);
+			CameraController.StartFollowing();
 			EnemyManager.StartSpawn();
 		}
 
@@ -38,14 +44,6 @@ namespace Controller.SceneController
 			PlayerController.Tick(deltaTime);
 			EnemyManager.Tick(deltaTime);
 			WorldManager.Tick();
-			HandleCameraFollowPlayerZPosition();
-		}
-
-		private void HandleCameraFollowPlayerZPosition()
-		{
-			var playerZPos = PlayerController.transform.position.z;
-			var cameraPos = MainCamera.transform.position;
-			MainCamera.transform.position = new Vector3(cameraPos.x, cameraPos.y, playerZPos - 10f);
 		}
 
 		private void SpawnPlayer()
