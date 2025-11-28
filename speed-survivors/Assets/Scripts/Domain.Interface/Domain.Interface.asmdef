@@ -1,7 +1,9 @@
 {
     "name": "Domain.Interface",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:2ad715593e202d549a0d6de0ae76134f"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

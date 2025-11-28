@@ -115,7 +115,7 @@ namespace Controller.Enemy
 			ActiveEnemies[index] = ActiveEnemies[lastIndex];
 			ActiveEnemies.RemoveAt(lastIndex);
 
-			DropManager.Instance.SpawnDrop(
+			DropManager.Instance.SpawnLootCluster(
 				enemyController.transform.position,
 				enemyController.GetLoot()
 				);

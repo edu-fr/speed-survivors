@@ -1,17 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Controller.General;
+using Domain.Drop;
 using Domain.Interface.Loot;
-using UnityEngine;
+using Engine;
 
 namespace Controller.Drop
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Runtime.CompilerServices;
+	using UnityEngine;
+	using Random = UnityEngine.Random;
+
 	public class DropManager : MonoBehaviour
 	{
-		private const float MagnetRadiusSqr = 5f * 5f;
-		private const float PopDuration = 0.5f;
+		[Header("Magnet Config")]
+		private const float MagnetRadiusSqr = 4f * 4f;
 		private const float MagnetSpeed = 15f;
+
+		[Header("Drop Movement Config")]
+		private const float DropArcHeight = 1.5f;
+		private const float PopDuration = 1.3f;
+		private readonly Range<float> _dropScatterRadius = new(1.3f, 1.9f);
+
+		[Header("Drop Movement Config")]
+		private const int DropValuePerSpawn = 10;
+
+		/// <summary>
+		/// HardCap to avoid crashes.
+		/// </summary>
+		private const int MaxOrbsPerDrop = 20;
 
 		[field: SerializeField]
 		private DropController XpPrefab { get; set; }
@@ -67,11 +84,11 @@ namespace Controller.Drop
 
 				if (!item.IsMagnetized && !item.IsAnimationFinished)
 				{
-					ProcessSpawnAnimation(item, deltaTime);
+					TickProcessSpawnAnimation(item, deltaTime);
 					continue;
 				}
 
-				ProcessMovementAndCollection(item, playerPosition, deltaTime, i);
+				TickProcessMovementAndCollection(item, playerPosition, deltaTime, i);
 			}
 		}
 
@@ -86,17 +103,80 @@ namespace Controller.Drop
 			Initialized = true;
 		}
 
+		// Chamado quando o monstro morre. Decide se spawna 1 ou vários.
+		public void SpawnLootCluster(Vector3 originPosition, ILoot lootData)
+		{
+			if (lootData.Type == LootType.Item)
+			{
+				SpawnSingleDrop(originPosition, lootData);
+			}
+			else
+			{
+				SpawnMultipleDrops(originPosition, lootData);
+			}
+		}
+
+		private void SpawnMultipleDrops(Vector3 origin, ILoot lootData)
+		{
+			var total = lootData.Amount;
+
+			var orbCount = Mathf.Clamp(total / DropValuePerSpawn, 1, MaxOrbsPerDrop);
+
+			var valuePerOrb = total / orbCount;
+			var remainder = total % orbCount;
+
+			for (var i = 0; i < orbCount; i++)
+			{
+				var finalValue = valuePerOrb;
+				if (i == 0)
+				{
+					finalValue += remainder;
+				}
+
+				var orbLoot = new Loot(lootData.Type, finalValue, lootData.Id);
+				SpawnSingleDrop(origin, orbLoot);
+			}
+		}
+
+		private void SpawnSingleDrop(Vector3 position, ILoot loot)
+		{
+			var dropObj = PoolManager.Instance.Spawn(
+				GetPrefabForDropType(loot.Type),
+				position,
+				Quaternion.identity,
+				GetPoolParent(loot)
+			);
+
+			// Calcula um ponto de aterrissagem aleatório ao redor da origem
+			var randomCircle = Random.insideUnitCircle * Random.Range(_dropScatterRadius.Start, _dropScatterRadius.End);
+			var targetPos = position + new Vector3(randomCircle.x, 0, randomCircle.y);
+
+			dropObj.Initialize(position, targetPos, loot);
+			ActiveDrops.Add(dropObj);
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void ProcessSpawnAnimation(DropController item, float deltaTime)
+		private void TickProcessSpawnAnimation(DropController item, float deltaTime)
 		{
 			item.AnimationTimer += deltaTime;
 			var progress = item.AnimationTimer / PopDuration;
 
-			item.Transform.position = Vector3.Lerp(item.StartPosition, item.TargetPosition, progress);
+			// 1. Movimento Linear no chão (XZ)
+			var currentLinearPos = Vector3.Lerp(item.StartPosition, item.TargetPosition, progress);
+
+			// 2. Movimento Parabólico no ar (Y)
+			// Mathf.Sin(progress * PI) cria um arco de 0 -> 1 -> 0
+			var heightOffset = Mathf.Sin(progress * Mathf.PI) * DropArcHeight;
+
+			// Combina os dois
+			item.Transform.position =
+				new Vector3(currentLinearPos.x, currentLinearPos.y + heightOffset, currentLinearPos.z);
 
 			if (item.AnimationTimer >= PopDuration)
 			{
 				item.IsAnimationFinished = true;
+				// Garante que termina exatamente no chão
+				item.Transform.position = item.TargetPosition;
 			}
 		}
 
@@ -118,7 +198,7 @@ namespace Controller.Drop
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void ProcessMovementAndCollection(DropController item, Vector3 playerPosition, float deltaTime,
+		private void TickProcessMovementAndCollection(DropController item, Vector3 playerPosition, float deltaTime,
 			int itemIndex)
 		{
 			if (!item.IsMagnetized)
@@ -141,20 +221,13 @@ namespace Controller.Drop
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CollectItemAtIndex(DropController item, int index)
 		{
-			// Player.AddXp(item.Value);
+			// Add item to player here?
 
 			int last = ActiveDrops.Count - 1;
 			ActiveDrops[index] = ActiveDrops[last];
 			ActiveDrops.RemoveAt(last);
 
 			PoolManager.Instance.Despawn(GetPrefabForDropType(item.GetLootType()), item);
-		}
-
-		public void SpawnDrop(Vector3 position, ILoot loot)
-		{
-			var dropObj = PoolManager.Instance.Spawn(XpPrefab, position, Quaternion.identity, GetPoolParent(loot));
-			dropObj.Initialize(position, loot);
-			ActiveDrops.Add(dropObj);
 		}
 
 		private Transform GetPoolParent(ILoot loot)

@@ -20,19 +20,17 @@ namespace Controller.Drop
 			Transform = transform;
 		}
 
-		public void Initialize(Vector3 position, ILoot loot)
+		public void Initialize(Vector3 startPos, Vector3 targetPos, ILoot loot)
 		{
+			StartPosition = startPos;
+			TargetPosition = targetPos;
 			Loot = loot;
-			IsMagnetized = false;
-			AnimationTimer = 0f;
-			StartPosition = position;
+
+			AnimationTimer = 0;
 			IsAnimationFinished = false;
+			IsMagnetized = false;
 
-			var randomCircle = Random.insideUnitCircle * 1.5f;
-			TargetPosition = position + new Vector3(randomCircle.x, 0, randomCircle.y);
-
-			Transform.position = position;
-			Transform.localScale = Vector3.one;
+			Transform.position = startPos;
 		}
 
 		// Used on big vacuums

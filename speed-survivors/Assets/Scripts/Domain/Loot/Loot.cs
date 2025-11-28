@@ -8,34 +8,26 @@ namespace Domain.Drop
 		public int Amount { get; private set; }
 		public string Id { get; private set; }
 
+		public Loot(LootType type, int amount, string id)
+		{
+			Type = type;
+			Amount = amount;
+			Id = id;
+		}
+
 		public static ILoot Xp(int amount)
 		{
-			return new Loot
-			{
-				Type = LootType.Xp,
-				Amount = amount,
-				Id = string.Empty
-			};
+			return new Loot(LootType.Xp, amount, string.Empty);
 		}
 
 		public static ILoot Coin(int amount)
 		{
-			return new Loot
-			{
-				Type = LootType.Coin,
-				Amount = amount,
-				Id = string.Empty
-			};
+			return new Loot(LootType.Coin, amount, string.Empty);
 		}
 
 		public static ILoot Item(string itemId, int amount = 1)
 		{
-			return new Loot
-			{
-				Type = LootType.Item,
-				Amount = amount,
-				Id = itemId
-			};
+			return new Loot(LootType.Item, amount, itemId);
 		}
 	}
 }
