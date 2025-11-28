@@ -5,52 +5,34 @@ namespace Controller.Drop
 {
 	public class DropController : MonoBehaviour
 	{
-		public ILoot Loot { get; private set; }
+		private ILoot Loot { get; set; }
+		public Transform Transform { get; private set; }
+		public bool IsMagnetized { get; private set; }
+		public Vector3 StartPosition { get; private set; }
+		public Vector3 TargetPosition { get; private set; }
 
-		private const float PopAnimationDuration = 0.5f;
-		private Transform CachedTransform { get; set; }
-		private bool IsMagnetized { get; set; }
-		private Vector3 StartPosition { get; set; }
-		private Vector3 TargetPosition { get; set; }
-
-		private float _animationTime;
+		// Public variables used for animation by the manager to avoid function overhead
+		public float AnimationTimer { get; set; }
+		public bool IsAnimationFinished { get; set; }
 
 		private void Awake()
 		{
-			CachedTransform = transform;
+			Transform = transform;
 		}
 
 		public void Initialize(Vector3 position, ILoot loot)
 		{
 			Loot = loot;
 			IsMagnetized = false;
-			_animationTime = 0f;
+			AnimationTimer = 0f;
 			StartPosition = position;
+			IsAnimationFinished = false;
 
 			var randomCircle = Random.insideUnitCircle * 1.5f;
 			TargetPosition = position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
-			CachedTransform.position = position;
-			CachedTransform.localScale = Vector3.one;
-		}
-
-		public bool TickMovementAndCheckCollected(float deltaTime, Vector3 playerPosition, float magnetRadius, float magnetSpeed)
-		{
-			if (_animationTime < PopAnimationDuration)
-			{
-				AnimatePop(deltaTime);
-				return false;
-			}
-
-			var distanceSqr = (playerPosition - CachedTransform.position).sqrMagnitude;
-
-			if (IsMagnetized || distanceSqr < magnetRadius * magnetRadius)
-			{
-				IsMagnetized = true;
-				return MoveTowardsPlayer(deltaTime, playerPosition, magnetSpeed);
-			}
-
-			return false;
+			Transform.position = position;
+			Transform.localScale = Vector3.one;
 		}
 
 		// Used on big vacuums
@@ -59,22 +41,9 @@ namespace Controller.Drop
 			IsMagnetized = true;
 		}
 
-		private void AnimatePop(float deltaTime)
+		public LootType GetLootType()
 		{
-			_animationTime += deltaTime;
-			var t = _animationTime / PopAnimationDuration;
-
-			CachedTransform.position = Vector3.Lerp(StartPosition, TargetPosition, t);
-
-			var scale = Mathf.Sin(t * Mathf.PI); // 0 -> 1 -> 0 (curva de pulo)
-		}
-
-		private bool MoveTowardsPlayer(float deltaTime, Vector3 playerPos, float speed)
-		{
-			var step = (speed * 2f) * deltaTime;
-			CachedTransform.position = Vector3.MoveTowards(CachedTransform.position, playerPos, step);
-
-			return Vector3.SqrMagnitude(CachedTransform.position - playerPos) < 0.5f;
+			return Loot.Type;
 		}
 	}
 }

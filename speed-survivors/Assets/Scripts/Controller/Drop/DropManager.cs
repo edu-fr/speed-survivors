@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Controller.General;
 using Domain.Interface.Loot;
 using UnityEngine;
@@ -8,6 +9,10 @@ namespace Controller.Drop
 {
 	public class DropManager : MonoBehaviour
 	{
+		private const float MagnetRadiusSqr = 5f * 5f;
+		private const float PopDuration = 0.5f;
+		private const float MagnetSpeed = 15f;
+
 		[field: SerializeField]
 		private DropController XpPrefab { get; set; }
 
@@ -29,8 +34,7 @@ namespace Controller.Drop
 		public static DropManager Instance { get; private set; }
 		private Transform PlayerTransform { get; set; }
 		private float MagnetRadius { get; set; }
-		private float MagnetSpeed { get; set; } = 15f;
-		private List<DropController> _activeDrops = new List<DropController>(2000);
+		private List<DropController> ActiveDrops { get; set; }
 		private bool Initialized { get; set; }
 
 		private void Awake()
@@ -38,6 +42,7 @@ namespace Controller.Drop
 			if (Instance == null)
 			{
 				Instance = this;
+				ActiveDrops = new List<DropController>(PoolManager.DefaultPoolMaxSize);
 			}
 			else
 			{
@@ -50,17 +55,23 @@ namespace Controller.Drop
 			if (!Initialized)
 				return;
 
-			var playerPos = PlayerTransform.position;
-			var dt = Time.deltaTime;
+			var playerPosition = PlayerTransform.position;
+			var deltaTime = Time.deltaTime;
+			var activeCount = ActiveDrops.Count;
 
-			for (var i = _activeDrops.Count - 1; i >= 0; i--)
+			for (var i = activeCount - 1; i >= 0; i--)
 			{
-				var item = _activeDrops[i];
-				var collected = item.TickMovementAndCheckCollected(dt, playerPos, MagnetRadius, MagnetSpeed);
-				if (collected)
+				var item = ActiveDrops[i];
+
+				StartMagnetismIfInRange(item, playerPosition);
+
+				if (!item.IsMagnetized && !item.IsAnimationFinished)
 				{
-					CollectItem(item, i);
+					ProcessSpawnAnimation(item, deltaTime);
+					continue;
 				}
+
+				ProcessMovementAndCollection(item, playerPosition, deltaTime, i);
 			}
 		}
 
@@ -75,11 +86,75 @@ namespace Controller.Drop
 			Initialized = true;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ProcessSpawnAnimation(DropController item, float deltaTime)
+		{
+			item.AnimationTimer += deltaTime;
+			var progress = item.AnimationTimer / PopDuration;
+
+			item.Transform.position = Vector3.Lerp(item.StartPosition, item.TargetPosition, progress);
+
+			if (item.AnimationTimer >= PopDuration)
+			{
+				item.IsAnimationFinished = true;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void StartMagnetismIfInRange(DropController item, Vector3 playerPosition)
+		{
+			if (item.IsMagnetized)
+				return;
+
+			var distanceX = playerPosition.x - item.Transform.position.x;
+			var distanceZ = playerPosition.z - item.Transform.position.z;
+
+			var distanceSquared = (distanceX * distanceX) + (distanceZ * distanceZ);
+
+			if (distanceSquared < MagnetRadiusSqr)
+			{
+				item.SetMagnetized();
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ProcessMovementAndCollection(DropController item, Vector3 playerPosition, float deltaTime,
+			int itemIndex)
+		{
+			if (!item.IsMagnetized)
+				return;
+
+			var currentPosition = item.Transform.position;
+			var directionVector = playerPosition - currentPosition;
+			var moveDistance = MagnetSpeed * deltaTime;
+
+			if (directionVector.sqrMagnitude <= moveDistance * moveDistance)
+			{
+				CollectItemAtIndex(item, itemIndex);
+			}
+			else
+			{
+				item.Transform.position = currentPosition + directionVector.normalized * moveDistance;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void CollectItemAtIndex(DropController item, int index)
+		{
+			// Player.AddXp(item.Value);
+
+			int last = ActiveDrops.Count - 1;
+			ActiveDrops[index] = ActiveDrops[last];
+			ActiveDrops.RemoveAt(last);
+
+			PoolManager.Instance.Despawn(GetPrefabForDropType(item.GetLootType()), item);
+		}
+
 		public void SpawnDrop(Vector3 position, ILoot loot)
 		{
 			var dropObj = PoolManager.Instance.Spawn(XpPrefab, position, Quaternion.identity, GetPoolParent(loot));
 			dropObj.Initialize(position, loot);
-			_activeDrops.Add(dropObj);
+			ActiveDrops.Add(dropObj);
 		}
 
 		private Transform GetPoolParent(ILoot loot)
@@ -93,18 +168,6 @@ namespace Controller.Drop
 			};
 		}
 
-		private void CollectItem(DropController item, int index)
-		{
-			// Apply drop on player via game manager or something like that
-			// PlayerLevelManager.Instance.AddXp(item.XpValue);
-
-			var lastIndex = _activeDrops.Count - 1;
-			_activeDrops[index] = _activeDrops[lastIndex];
-			_activeDrops.RemoveAt(lastIndex);
-
-			PoolManager.Instance.Despawn(GetPrefabForDropType(item.Loot.Type), item);
-		}
-
 		private DropController GetPrefabForDropType(LootType lootType)
 		{
 			return lootType switch
@@ -112,13 +175,14 @@ namespace Controller.Drop
 				LootType.Xp => XpPrefab,
 				LootType.Coin => CoinPrefab,
 				LootType.Item => ItemPrefab,
-				_ => throw new ArgumentOutOfRangeException(lootType.ToString(), "Invalid drop type in GetPrefabForDropType")
+				_ => throw new ArgumentOutOfRangeException(lootType.ToString(),
+					"Invalid drop type in GetPrefabForDropType")
 			};
 		}
 
 		public void TriggerBigVacuum()
 		{
-			foreach (var item in _activeDrops)
+			foreach (var item in ActiveDrops)
 			{
 				item.SetMagnetized();
 			}
