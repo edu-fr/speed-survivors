@@ -20,5 +20,7 @@ namespace Domain.Interface.Player
 		float BaseDamage { get; }
 		float CurrentHP { get; }
 		IWeaponArsenal Arsenal { get; }
+		float MagnetRadius { get; }
+		float CurrentXp { get; }
 	}
 }

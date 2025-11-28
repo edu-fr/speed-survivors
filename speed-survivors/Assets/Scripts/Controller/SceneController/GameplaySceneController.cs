@@ -1,3 +1,4 @@
+using Controller.Drop;
 using Controller.Enemy;
 using Controller.General;
 using Controller.Player;
@@ -38,6 +39,7 @@ namespace Controller.SceneController
 			CameraController.StartFollowing();
 			EnemyManager.Init(playerTransform);
 			EnemyManager.StartSpawn();
+			DropManager.Instance.Init(playerTransform, PlayerController.GetPlayerMagnetRadius());
 		}
 
 		private void Update()

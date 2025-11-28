@@ -39,6 +39,11 @@ namespace Controller.Player
 			HandleMovement(deltaTime);
 		}
 
+		public float GetPlayerMagnetRadius()
+		{
+			return Player.MagnetRadius;
+		}
+
 		private void HandleInput()
 		{
 			if (InputHandler.TryGetTouchWorldPosition(out var touchWorldPosition))

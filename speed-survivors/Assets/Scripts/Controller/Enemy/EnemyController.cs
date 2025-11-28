@@ -2,6 +2,7 @@ using System;
 using Controller.Interface.General;
 using Domain.Enemy;
 using Domain.Interface.Enemy;
+using Domain.Interface.Loot;
 using UnityEngine;
 
 namespace Controller.Enemy
@@ -77,6 +78,11 @@ namespace Controller.Enemy
 		public void UnsubscribeFromDeathEvent(Action<EnemyController> callback)
 		{
 			OnDeath -= callback;
+		}
+
+		public ILoot GetLoot()
+		{
+			return Enemy.Loot;
 		}
 	}
 }

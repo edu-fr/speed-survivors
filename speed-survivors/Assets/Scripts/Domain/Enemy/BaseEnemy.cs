@@ -1,4 +1,5 @@
 using Domain.Interface.Enemy;
+using Domain.Interface.Loot;
 
 namespace Domain.Enemy
 {
@@ -8,6 +9,7 @@ namespace Domain.Enemy
 		public abstract float MoveSpeed { get; protected set; }
 		public abstract float Damage { get; protected set; }
 		public abstract float CurrentHP { get; protected set; }
+		public abstract ILoot Loot { get; protected set; }
 
 		public void TakeDamage(float amount)
 		{

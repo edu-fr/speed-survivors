@@ -15,8 +15,10 @@ namespace Domain.Player
 		public float BaseDamage { get; private set; }
 		public float CurrentHP { get; private set; }
 		public IWeaponArsenal Arsenal { get; private set; }
+		public float MagnetRadius { get; private set; }
+		public float CurrentXp { get; private set; }
 
-		public Player(float maxHP, float lateralMoveSpeed, float forwardMoveSpeed, float baseDamage)
+		public Player(float maxHP, float lateralMoveSpeed, float forwardMoveSpeed, float baseDamage, float magnetRadius)
 		{
 			MaxHP = maxHP;
 			LateralLateralMoveSpeed = lateralMoveSpeed;
@@ -24,6 +26,8 @@ namespace Domain.Player
 			BaseDamage = baseDamage;
 			CurrentHP = maxHP;
 			Arsenal = new WeaponArsenal();
+			MagnetRadius = magnetRadius;
+			CurrentXp = 0f;
 		}
 
 		public Player() // Debug default player
@@ -34,6 +38,8 @@ namespace Domain.Player
 			BaseDamage = 5f;
 			CurrentHP = MaxHP;
 			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });
+			MagnetRadius = 2f;
+			CurrentXp = 0f;
 		}
 	}
 }

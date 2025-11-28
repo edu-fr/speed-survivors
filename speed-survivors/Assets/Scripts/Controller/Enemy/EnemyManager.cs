@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Controller.Drop;
 using Controller.General;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -113,6 +114,11 @@ namespace Controller.Enemy
 			var lastIndex = ActiveEnemies.Count - 1;
 			ActiveEnemies[index] = ActiveEnemies[lastIndex];
 			ActiveEnemies.RemoveAt(lastIndex);
+
+			DropManager.Instance.SpawnDrop(
+				enemyController.transform.position,
+				enemyController.GetLoot()
+				);
 
 			// Dying animation?
 			PoolManager.Instance.Despawn(EnemyPrefab, enemyController);
