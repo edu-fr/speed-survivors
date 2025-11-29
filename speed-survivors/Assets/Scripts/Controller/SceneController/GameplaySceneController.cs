@@ -2,6 +2,7 @@ using Controller.Drop;
 using Controller.Enemy;
 using Controller.General;
 using Controller.Player;
+using Controller.UI;
 using Controller.World;
 using UnityEngine;
 
@@ -27,12 +28,16 @@ namespace Controller.SceneController
 		[field: SerializeField]
 		private CameraController CameraController { get; set; }
 
+		[field: SerializeField]
+		private GameplayUIController UIController { get; set; }
+
 		private PlayerController PlayerController { get; set; }
 
 		private void Start()
 		{
 			SpawnPlayer();
 			var playerTransform = PlayerController.transform;
+			UIController.Init(PlayerController);
 			WorldManager.Init(playerTransform);
 			WorldManager.SpawnInitialWorldSections();
 			CameraController.Init(playerTransform);

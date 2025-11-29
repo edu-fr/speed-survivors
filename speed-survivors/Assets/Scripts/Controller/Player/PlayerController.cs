@@ -87,6 +87,13 @@ namespace Controller.Player
 			XpCollectedSubscribeCount--;
 		}
 
+		public (int xp, int level, int nextLevelXp) GetCurrentXpData()
+		{
+			return (Player.LevelProgression.CurrentExperience,
+				Player.LevelProgression.CurrentLevel,
+				Player.LevelProgression.ExperienceRequiredForNextLevel);
+		}
+
 		private void OnDestroy()
 		{
 			if (InputHandler != null)
