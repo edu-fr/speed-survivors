@@ -1,3 +1,6 @@
+using System;
+using Domain.Interface.General;
+using Domain.Interface.Loot;
 using Domain.Interface.Weapon.Base;
 
 namespace Domain.Interface.Player
@@ -21,6 +24,9 @@ namespace Domain.Interface.Player
 		float CurrentHP { get; }
 		IWeaponArsenal Arsenal { get; }
 		float MagnetRadius { get; }
-		float CurrentXp { get; }
+		ILevelProgression LevelProgression { get; }
+		void OnLootCollected(ILoot loot);
+		void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback);
+		void UnsubscribeFromXpCollected(Action<(int xp, int level, int nextLevelXp)> callback);
 	}
 }

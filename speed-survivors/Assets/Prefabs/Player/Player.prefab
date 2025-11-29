@@ -55,6 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Controller::PlayerController
   <Collider>k__BackingField: {fileID: 4611462308341889814}
   <WeaponArsenalHandler>k__BackingField: {fileID: 2223139006657158881}
+  <LevelProgressionSO>k__BackingField: {fileID: 11400000, guid: d5cff879e6d6d504db97d5aea7fabbda, type: 2}
 --- !u!114 &2223139006657158881
 MonoBehaviour:
   m_ObjectHideFlags: 0

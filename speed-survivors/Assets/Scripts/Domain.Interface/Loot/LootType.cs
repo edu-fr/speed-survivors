@@ -2,7 +2,7 @@ namespace Domain.Interface.Loot
 {
 	public enum LootType
 	{
-		Xp,
+		XP,
 		Coin,
 		Item
 	}

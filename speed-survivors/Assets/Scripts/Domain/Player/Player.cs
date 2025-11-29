@@ -1,4 +1,9 @@
+using System;
 using System.Collections.Generic;
+using Domain.General;
+using Domain.Interface.Config;
+using Domain.Interface.General;
+using Domain.Interface.Loot;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
@@ -16,9 +21,11 @@ namespace Domain.Player
 		public float CurrentHP { get; private set; }
 		public IWeaponArsenal Arsenal { get; private set; }
 		public float MagnetRadius { get; private set; }
-		public float CurrentXp { get; private set; }
+		public ILevelProgression LevelProgression { get; private set; }
+		public event Action<(int xp, int level, int nextLevelXp)> OnXpCollected;
 
-		public Player(float maxHP, float lateralMoveSpeed, float forwardMoveSpeed, float baseDamage, float magnetRadius)
+		public Player(float maxHP, float lateralMoveSpeed, float forwardMoveSpeed, float baseDamage, float magnetRadius,
+			IGrowthConfig growthConfig)
 		{
 			MaxHP = maxHP;
 			LateralLateralMoveSpeed = lateralMoveSpeed;
@@ -27,10 +34,10 @@ namespace Domain.Player
 			CurrentHP = maxHP;
 			Arsenal = new WeaponArsenal();
 			MagnetRadius = magnetRadius;
-			CurrentXp = 0f;
+			LevelProgression = new LevelProgression(growthConfig);
 		}
 
-		public Player() // Debug default player
+		public Player(IGrowthConfig growthConfig) // Debug default player
 		{
 			MaxHP = 100f;
 			LateralLateralMoveSpeed = 30f;
@@ -39,7 +46,42 @@ namespace Domain.Player
 			CurrentHP = MaxHP;
 			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });
 			MagnetRadius = 2f;
-			CurrentXp = 0f;
+			LevelProgression = new LevelProgression(growthConfig);
+		}
+
+		public void OnLootCollected(ILoot loot)
+		{
+			switch (loot.Type)
+			{
+				case LootType.XP:
+					ProgressXP(loot.Amount);
+					break;
+				case LootType.Coin:
+					// Handle coin collection
+					break;
+				case LootType.Item:
+					// Handle item collection
+					break;
+			}
+		}
+
+		private void ProgressXP(int amount)
+		{
+			LevelProgression.AddExperience(amount);
+			OnXpCollected?.Invoke((
+				LevelProgression.CurrentExperience,
+				LevelProgression.CurrentLevel,
+				LevelProgression.ExperienceRequiredForNextLevel));
+		}
+
+		public void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		{
+			OnXpCollected += callback;
+		}
+
+		public void UnsubscribeFromXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		{
+			OnXpCollected -= callback;
 		}
 	}
 }

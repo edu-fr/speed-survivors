@@ -1,24 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Controller.General;
 using Domain.Drop;
 using Domain.Interface.Loot;
 using Engine;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Controller.Drop
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Runtime.CompilerServices;
-	using UnityEngine;
-	using Random = UnityEngine.Random;
-
 	public class DropManager : MonoBehaviour
 	{
 		[Header("Magnet Config")]
 		private const float MagnetRadiusSqr = 4f * 4f;
+
 		private const float MagnetSpeed = 15f;
 
 		[Header("Drop Movement Config")]
 		private const float DropArcHeight = 1.5f;
+
 		private const float PopDuration = 1.3f;
 		private readonly Range<float> _dropScatterRadius = new(1.3f, 1.9f);
 
@@ -234,7 +235,7 @@ namespace Controller.Drop
 		{
 			return loot.Type switch
 			{
-				LootType.Xp => XpDropPoolParent,
+				LootType.XP => XpDropPoolParent,
 				LootType.Coin => CoinDropPoolParent,
 				LootType.Item => ItemDropPoolParent,
 				_ => throw new ArgumentOutOfRangeException(loot.Type.ToString(), "Invalid drop type in SpawnDrop")
@@ -245,7 +246,7 @@ namespace Controller.Drop
 		{
 			return lootType switch
 			{
-				LootType.Xp => XpPrefab,
+				LootType.XP => XpPrefab,
 				LootType.Coin => CoinPrefab,
 				LootType.Item => ItemPrefab,
 				_ => throw new ArgumentOutOfRangeException(lootType.ToString(),

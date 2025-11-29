@@ -17,7 +17,7 @@ namespace Domain.Drop
 
 		public static ILoot Xp(int amount)
 		{
-			return new Loot(LootType.Xp, amount, string.Empty);
+			return new Loot(LootType.XP, amount, string.Empty);
 		}
 
 		public static ILoot Coin(int amount)

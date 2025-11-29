@@ -1,3 +1,6 @@
+using System;
+using Data.ScriptableObjects.Generator;
+using Domain.Interface.Loot;
 using Domain.Interface.Player;
 using UnityEngine;
 
@@ -11,14 +14,18 @@ namespace Controller.Player
 		[field: SerializeField]
 		private PlayerWeaponArsenalHandler WeaponArsenalHandler { get; set; }
 
+		[field: SerializeField]
+		private GrowthConfigGeneratorSO LevelProgressionSO { get; set; }
+
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
 		private bool Initialized { get; set; }
 		private IPlayer Player { get; set; }
+		private int XpCollectedSubscribeCount { get; set; }
 
 		public void Init(Camera mainCamera, Vector3 startingPos, float xMoveRange)
 		{
-			Player = new Domain.Player.Player();
+			Player = new Domain.Player.Player(LevelProgressionSO.ToDomain());
 			InputHandler = new PlayerInputHandler(mainCamera);
 			MovementHandler = new PlayerMovementHandler(Player, transform, xMoveRange, startingPos.x);
 
@@ -63,6 +70,23 @@ namespace Controller.Player
 			transform.position = startingPos + new Vector3(0, heightOffset, 0);
 		}
 
+		public void OnLootCollected(ILoot loot)
+		{
+			Player.OnLootCollected(loot);
+		}
+
+		public void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		{
+			Player.SubscribeToXpCollected(callback);
+			XpCollectedSubscribeCount++;
+		}
+
+		public void UnsubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		{
+			Player.UnsubscribeFromXpCollected(callback);
+			XpCollectedSubscribeCount--;
+		}
+
 		private void OnDestroy()
 		{
 			if (InputHandler != null)
@@ -70,6 +94,10 @@ namespace Controller.Player
 
 			if (WeaponArsenalHandler != null)
 				WeaponArsenalHandler.OnDestroy();
+
+			if (XpCollectedSubscribeCount > 0)
+				throw new InvalidOperationException(
+					$"PlayerController was destroyed but there are still {XpCollectedSubscribeCount} subscriptions to XP collected events. Make sure to unsubscribe properly to avoid memory leaks.");
 		}
 	}
 }
