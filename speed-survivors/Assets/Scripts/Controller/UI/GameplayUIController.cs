@@ -18,7 +18,7 @@ namespace Controller.UI
 			SubscribeToPlayerEvents();
 			var initialXpData = playerController.GetCurrentXpData();
 			XpBarView.UpdateLevelLabel(initialXpData.level);
-			XpBarView.UpdateProgress(initialXpData.xp, initialXpData.nextLevelXp);
+			XpBarView.UpdateProgress(initialXpData.currentXp, initialXpData.nextLevelXpDelta);
 		}
 
 		private void SubscribeToPlayerEvents()
@@ -37,17 +37,17 @@ namespace Controller.UI
 			}
 		}
 
-		private void HandleExperienceUpdate((int xp, int level, int nextLevelXp) xpData)
+		private void HandleExperienceUpdate((int currentXp, int level, int nextLevelXpDelta) xpData)
 		{
-			UpdateVisuals(xpData.xp, xpData.level, xpData.nextLevelXp);
+			UpdateVisuals(xpData.currentXp, xpData.level, xpData.nextLevelXpDelta);
 
 			// Level up
 		}
 
 		private void UpdateVisuals(float xp, int level, float reqXp)
 		{
-			XpBarView.UpdateProgress(xp, reqXp);
 			XpBarView.UpdateLevelLabel(level);
+			XpBarView.UpdateProgress(xp, reqXp);
 		}
 
 		private void OnDestroy()

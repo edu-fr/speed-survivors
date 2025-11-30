@@ -1,4 +1,5 @@
 using System;
+using Controller.DebugController;
 using Data.ScriptableObjects.Generator;
 using Domain.Interface.Loot;
 using Domain.Interface.Player;
@@ -40,10 +41,19 @@ namespace Controller.Player
 			if (!Initialized)
 				return;
 
+			DebugTick();
+
 			WeaponArsenalHandler.Tick(deltaTime, true, MovementHandler.CurrentForwardVelocity);
 
 			HandleInput();
 			HandleMovement(deltaTime);
+		}
+
+		private void DebugTick()
+		{
+			var debugInstance = DebugOverlayManager.Instance;
+			debugInstance.Track("Total XP: ", Player.LevelProgression.TotalExperience);
+			debugInstance.Track("Next level total XP: ", Player.LevelProgression.ExperienceRequiredForNextLevel);
 		}
 
 		public float GetPlayerMagnetRadius()
@@ -75,23 +85,24 @@ namespace Controller.Player
 			Player.OnLootCollected(loot);
 		}
 
-		public void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		public void SubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
 			Player.SubscribeToXpCollected(callback);
 			XpCollectedSubscribeCount++;
 		}
 
-		public void UnsubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		public void UnsubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
 			Player.UnsubscribeFromXpCollected(callback);
 			XpCollectedSubscribeCount--;
 		}
 
-		public (int xp, int level, int nextLevelXp) GetCurrentXpData()
+		public (int currentXp, int level, int nextLevelXpDelta) GetCurrentXpData()
 		{
-			return (Player.LevelProgression.CurrentExperience,
-				Player.LevelProgression.CurrentLevel,
-				Player.LevelProgression.ExperienceRequiredForNextLevel);
+			var progress = Player.LevelProgression;
+			return (progress.CurrentExperience,
+				progress.CurrentLevel,
+				progress.ExperienceRequiredForNextLevel - progress.ExperienceRequiredForPrevious);
 		}
 
 		private void OnDestroy()

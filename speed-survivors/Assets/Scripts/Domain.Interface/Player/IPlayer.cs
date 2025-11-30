@@ -26,7 +26,7 @@ namespace Domain.Interface.Player
 		float MagnetRadius { get; }
 		ILevelProgression LevelProgression { get; }
 		void OnLootCollected(ILoot loot);
-		void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback);
-		void UnsubscribeFromXpCollected(Action<(int xp, int level, int nextLevelXp)> callback);
+		void SubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback);
+		void UnsubscribeFromXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback);
 	}
 }

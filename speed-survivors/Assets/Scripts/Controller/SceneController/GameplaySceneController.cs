@@ -44,7 +44,7 @@ namespace Controller.SceneController
 			CameraController.StartFollowing();
 			EnemyManager.Init(playerTransform);
 			EnemyManager.StartSpawn();
-			DropManager.Instance.Init(playerTransform, PlayerController.GetPlayerMagnetRadius());
+			DropManager.Instance.Init(PlayerController, PlayerController.GetPlayerMagnetRadius());
 		}
 
 		private void Update()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Controller.General;
+using Controller.Player;
 using Domain.Drop;
 using Domain.Interface.Loot;
 using Engine;
@@ -24,7 +25,7 @@ namespace Controller.Drop
 		private readonly Range<float> _dropScatterRadius = new(1.3f, 1.9f);
 
 		[Header("Drop Movement Config")]
-		private const int DropValuePerSpawn = 10;
+		private const int DropValuePerSpawn = 5;
 
 		/// <summary>
 		/// HardCap to avoid crashes.
@@ -50,10 +51,23 @@ namespace Controller.Drop
 		public Transform ItemDropPoolParent { get; private set; }
 
 		public static DropManager Instance { get; private set; }
-		private Transform PlayerTransform { get; set; }
+		private PlayerController PlayerController { get; set; }
+		private Transform CachedPlayerTransform { get; set; }
 		private float MagnetRadius { get; set; }
 		private List<DropController> ActiveDrops { get; set; }
 		private bool Initialized { get; set; }
+
+		public void Init(PlayerController playerController, float magnetRadius)
+		{
+			if (Initialized)
+				throw new InvalidOperationException("DropManager already initialized");
+
+			PlayerController = playerController;
+			CachedPlayerTransform = playerController.transform;
+			MagnetRadius = magnetRadius;
+
+			Initialized = true;
+		}
 
 		private void Awake()
 		{
@@ -73,7 +87,7 @@ namespace Controller.Drop
 			if (!Initialized)
 				return;
 
-			var playerPosition = PlayerTransform.position;
+			var playerPosition = CachedPlayerTransform.position;
 			var deltaTime = Time.deltaTime;
 			var activeCount = ActiveDrops.Count;
 
@@ -93,18 +107,6 @@ namespace Controller.Drop
 			}
 		}
 
-		public void Init(Transform playerTransform, float magnetRadius)
-		{
-			if (Initialized)
-				throw new InvalidOperationException("DropManager already initialized");
-
-			PlayerTransform = playerTransform;
-			MagnetRadius = magnetRadius;
-
-			Initialized = true;
-		}
-
-		// Chamado quando o monstro morre. Decide se spawna 1 ou vários.
 		public void SpawnLootCluster(Vector3 originPosition, ILoot lootData)
 		{
 			if (lootData.Type == LootType.Item)
@@ -148,11 +150,10 @@ namespace Controller.Drop
 				GetPoolParent(loot)
 			);
 
-			// Calcula um ponto de aterrissagem aleatório ao redor da origem
 			var randomCircle = Random.insideUnitCircle * Random.Range(_dropScatterRadius.Start, _dropScatterRadius.End);
 			var targetPos = position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
-			dropObj.Initialize(position, targetPos, loot);
+			dropObj.Init(position, targetPos, loot);
 			ActiveDrops.Add(dropObj);
 		}
 
@@ -162,21 +163,16 @@ namespace Controller.Drop
 			item.AnimationTimer += deltaTime;
 			var progress = item.AnimationTimer / PopDuration;
 
-			// 1. Movimento Linear no chão (XZ)
 			var currentLinearPos = Vector3.Lerp(item.StartPosition, item.TargetPosition, progress);
 
-			// 2. Movimento Parabólico no ar (Y)
-			// Mathf.Sin(progress * PI) cria um arco de 0 -> 1 -> 0
 			var heightOffset = Mathf.Sin(progress * Mathf.PI) * DropArcHeight;
 
-			// Combina os dois
 			item.Transform.position =
 				new Vector3(currentLinearPos.x, currentLinearPos.y + heightOffset, currentLinearPos.z);
 
 			if (item.AnimationTimer >= PopDuration)
 			{
 				item.IsAnimationFinished = true;
-				// Garante que termina exatamente no chão
 				item.Transform.position = item.TargetPosition;
 			}
 		}
@@ -222,13 +218,14 @@ namespace Controller.Drop
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CollectItemAtIndex(DropController item, int index)
 		{
-			// Add item to player here?
+			var lootData = item.GetLootDataCopy();
+			PlayerController.OnLootCollected(lootData);
 
-			int last = ActiveDrops.Count - 1;
+			var last = ActiveDrops.Count - 1;
 			ActiveDrops[index] = ActiveDrops[last];
 			ActiveDrops.RemoveAt(last);
 
-			PoolManager.Instance.Despawn(GetPrefabForDropType(item.GetLootType()), item);
+			PoolManager.Instance.Despawn(GetPrefabForDropType(lootData.Type), item);
 		}
 
 		private Transform GetPoolParent(ILoot loot)

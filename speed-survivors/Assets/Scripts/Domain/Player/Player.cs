@@ -22,7 +22,7 @@ namespace Domain.Player
 		public IWeaponArsenal Arsenal { get; private set; }
 		public float MagnetRadius { get; private set; }
 		public ILevelProgression LevelProgression { get; private set; }
-		public event Action<(int xp, int level, int nextLevelXp)> OnXpCollected;
+		public event Action<(int currentXp, int level, int nextLevelXpDelta)> OnXpCollected;
 
 		public Player(float maxHP, float lateralMoveSpeed, float forwardMoveSpeed, float baseDamage, float magnetRadius,
 			IGrowthConfig growthConfig)
@@ -71,15 +71,15 @@ namespace Domain.Player
 			OnXpCollected?.Invoke((
 				LevelProgression.CurrentExperience,
 				LevelProgression.CurrentLevel,
-				LevelProgression.ExperienceRequiredForNextLevel));
+				LevelProgression.ExperienceRequiredForNextLevel - LevelProgression.ExperienceRequiredForPrevious));
 		}
 
-		public void SubscribeToXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		public void SubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
 			OnXpCollected += callback;
 		}
 
-		public void UnsubscribeFromXpCollected(Action<(int xp, int level, int nextLevelXp)> callback)
+		public void UnsubscribeFromXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
 			OnXpCollected -= callback;
 		}

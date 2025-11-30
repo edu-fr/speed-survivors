@@ -29,7 +29,7 @@ namespace Domain.Config
 		public int CalculateRequiredValue(int targetGoal)
 		{
 			if (targetGoal <= 1)
-				return BaseValue;
+				return 0;
 
 			var x = targetGoal - 1;
 

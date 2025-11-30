@@ -91,7 +91,7 @@ namespace Controller.Enemy
 		{
 			var spawnPosition = GetRandomPositionInSpawnArea();
 			var enemy = PoolManager.Instance.Spawn(EnemyPrefab, spawnPosition, Quaternion.identity, transform);
-			enemy.Initialize();
+			enemy.Init();
 			ActiveEnemies.Add(enemy);
 			AdjustEnemyHeightOnFloor(enemy, spawnPosition);
 		}

@@ -18,7 +18,7 @@ namespace Controller.Enemy
 		private readonly Vector3 _moveDirection = Vector3.back;
 		public event Action<EnemyController> OnDeath;
 
-		public void Initialize()
+		public void Init()
 		{
 			Enemy = new Zombie();
 			StoppedByGettingHit = false;

@@ -20,7 +20,7 @@ namespace Controller.Weapon.Ammo
 
 		private static readonly RaycastHit[] RaycastResults = new RaycastHit[1];
 
-		public void Initialize(Projectile prefab, float damage, float speed, float lifetime, Vector3 direction)
+		public void Init(Projectile prefab, float damage, float speed, float lifetime, Vector3 direction)
 		{
 			Prefab = prefab;
 			Lifetime = lifetime;

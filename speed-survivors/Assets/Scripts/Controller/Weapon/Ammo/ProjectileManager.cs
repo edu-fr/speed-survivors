@@ -41,7 +41,7 @@ namespace Controller.Weapon.Ammo
 		public void SpawnProjectile(Projectile prefab, Vector3 pos, Vector3 dir, float speed, float damage)
 		{
 			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir), ProjectilePoolParent);
-			projectile.Initialize(prefab, damage, speed, ProjectileLifetime, dir);
+			projectile.Init(prefab, damage, speed, ProjectileLifetime, dir);
 			ActiveProjectiles.Add(projectile);
 		}
 

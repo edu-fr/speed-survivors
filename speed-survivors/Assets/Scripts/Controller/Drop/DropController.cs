@@ -1,3 +1,4 @@
+using Domain.Drop;
 using Domain.Interface.Loot;
 using UnityEngine;
 
@@ -15,12 +16,7 @@ namespace Controller.Drop
 		public float AnimationTimer { get; set; }
 		public bool IsAnimationFinished { get; set; }
 
-		private void Awake()
-		{
-			Transform = transform;
-		}
-
-		public void Initialize(Vector3 startPos, Vector3 targetPos, ILoot loot)
+		public void Init(Vector3 startPos, Vector3 targetPos, ILoot loot)
 		{
 			StartPosition = startPos;
 			TargetPosition = targetPos;
@@ -33,15 +29,20 @@ namespace Controller.Drop
 			Transform.position = startPos;
 		}
 
+		private void Awake()
+		{
+			Transform = transform;
+		}
+
 		// Used on big vacuums
 		public void SetMagnetized()
 		{
 			IsMagnetized = true;
 		}
 
-		public LootType GetLootType()
+		public ILoot GetLootDataCopy()
 		{
-			return Loot.Type;
+			return new Loot(Loot.Type, Loot.Amount, Loot.Id);
 		}
 	}
 }

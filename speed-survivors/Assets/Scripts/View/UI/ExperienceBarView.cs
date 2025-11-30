@@ -26,15 +26,12 @@ namespace View.UI
 				return;
 
 			_cachedLevel = newLevel;
-			LevelText.text = _cachedLevel.ToString();
+			LevelText.text = new string($"Lv {_cachedLevel}");
 		}
 
 		private float CalculateFillAmount(float current, float max)
 		{
-			if (max <= 0)
-				return 1f;
-
-			return Mathf.Clamp01(current / max);
+			return max <= 0 ? 1f : Mathf.Clamp01(current / max);
 		}
 	}
 }
