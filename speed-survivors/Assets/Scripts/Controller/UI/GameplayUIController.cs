@@ -1,3 +1,4 @@
+using Controller.Modal;
 using Controller.Player;
 using UnityEngine;
 using View.UI;
@@ -6,11 +7,13 @@ namespace Controller.UI
 {
 	public class GameplayUIController : MonoBehaviour
 	{
-		private PlayerController PlayerController { get; set; }
-
-		[field: Header("Views")]
 		[field: SerializeField]
 		private ExperienceBarView XpBarView { get; set; }
+
+		[field: SerializeField]
+		private LevelUpModalController LevelUpModalController { get; set; }
+
+		private PlayerController PlayerController { get; set; }
 
 		public void Init(PlayerController playerController)
 		{
@@ -40,8 +43,7 @@ namespace Controller.UI
 		private void HandleExperienceUpdate((int currentXp, int level, int nextLevelXpDelta) xpData)
 		{
 			UpdateVisuals(xpData.currentXp, xpData.level, xpData.nextLevelXpDelta);
-
-			// Level up
+			LevelUpModalController.HandleExperienceUpdate(xpData.level);
 		}
 
 		private void UpdateVisuals(float xp, int level, float reqXp)

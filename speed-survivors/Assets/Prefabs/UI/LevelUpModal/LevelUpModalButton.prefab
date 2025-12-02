@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 9116568220984697067}
   - component: {fileID: 6357924770123216029}
   - component: {fileID: 6770156428189905163}
+  - component: {fileID: 8963371559292234404}
   m_Layer: 5
   m_Name: LevelUpModalButton
   m_TagString: Untagged
@@ -481,6 +482,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8963371559292234404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6482041718655380840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7fe8dccb15d400996beb6f8cf68d71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.UI.Modal.UpgradeOptionView
+  <CardButton>k__BackingField: {fileID: 6770156428189905163}
+  <IconImage>k__BackingField: {fileID: 2616473571319286836}
+  <TitleText>k__BackingField: {fileID: 9000064440490436397}
+  <DescriptionText>k__BackingField: {fileID: 5812579849940159599}
 --- !u!1 &7998145241750962871
 GameObject:
   m_ObjectHideFlags: 0

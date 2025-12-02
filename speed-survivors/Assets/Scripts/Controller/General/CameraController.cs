@@ -12,7 +12,6 @@ namespace Controller.General
 
 		private Vector3 Offset { get; set; }
 		private Transform Target { get; set; }
-		private bool ShouldFollow { get; set; }
 		private Vector3 _currentVelocity;
 		private bool Initialized { get; set; }
 
@@ -24,14 +23,9 @@ namespace Controller.General
 			Initialized = true;
 		}
 
-		private void LateUpdate()
+		public void LateTick()
 		{
 			FollowTargetZ();
-		}
-
-		public void StartFollowing()
-		{
-			ShouldFollow = true;
 		}
 
 		public void SnapToTarget()
@@ -45,9 +39,6 @@ namespace Controller.General
 
 		private void FollowTargetZ()
 		{
-			if (!ShouldFollow)
-				return;
-
 			CheckInit();
 
 			var desiredPosition = Target.position + Offset;

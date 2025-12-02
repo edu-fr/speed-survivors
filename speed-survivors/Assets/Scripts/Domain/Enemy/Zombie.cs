@@ -1,5 +1,5 @@
 using Domain.Interface.Loot;
-using static Domain.Drop.Loot;
+using static Domain.Loot.Loot;
 
 namespace Domain.Enemy
 {

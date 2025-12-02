@@ -1,6 +1,6 @@
 using Domain.Interface.Loot;
 
-namespace Domain.Drop
+namespace Domain.Loot
 {
 	public class Loot : ILoot
 	{

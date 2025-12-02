@@ -1,3 +1,4 @@
+using System;
 using Controller.Drop;
 using Controller.Enemy;
 using Controller.General;
@@ -32,22 +33,31 @@ namespace Controller.SceneController
 		private GameplayUIController UIController { get; set; }
 
 		private PlayerController PlayerController { get; set; }
+		private bool GameplayStarted { get; set; }
 
-		private void Start()
+		public void SetupScene()
 		{
-			SpawnPlayer();
+			PlayerController = Instantiate(PlayerPrefab);
+			PlayerController.Init(MainCamera, StartingPoint.position, WorldManager.DefaultSegmentTransformSize.x / 2f);
 			var playerTransform = PlayerController.transform;
 			UIController.Init(PlayerController);
 			WorldManager.Init(playerTransform);
 			WorldManager.SpawnInitialWorldSections();
 			CameraController.Init(playerTransform);
-			CameraController.StartFollowing();
 			EnemyManager.Init(playerTransform);
-			EnemyManager.StartSpawn();
 			DropManager.Instance.Init(PlayerController, PlayerController.GetPlayerMagnetRadius());
 		}
 
-		private void Update()
+		public void StartGameplay()
+		{
+			if (GameplayStarted)
+				throw new InvalidOperationException("Gameplay already started");
+
+			EnemyManager.StartSpawn();
+			GameplayStarted = true;
+		}
+
+		public void Tick()
 		{
 			var deltaTime = Time.deltaTime;
 			PlayerController.Tick(deltaTime);
@@ -55,10 +65,9 @@ namespace Controller.SceneController
 			WorldManager.Tick();
 		}
 
-		private void SpawnPlayer()
+		public void LateTick()
 		{
-			PlayerController = Instantiate(PlayerPrefab);
-			PlayerController.Init(MainCamera, StartingPoint.position, WorldManager.DefaultSegmentTransformSize.x / 2f);
+			CameraController.LateTick();
 		}
 	}
 }

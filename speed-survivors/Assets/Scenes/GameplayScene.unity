@@ -1239,6 +1239,51 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &535579572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 535579574}
+  - component: {fileID: 535579573}
+  m_Layer: 0
+  m_Name: GameplayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &535579573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535579572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc0072279494a268785ff287704c3d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Controller::Controller.General.GameplayManager
+  <GameplaySceneController>k__BackingField: {fileID: 2035808847}
+--- !u!4 &535579574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535579572}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.17285, y: 0, z: 4339.0654}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2590,6 +2635,8 @@ GameObject:
   - component: {fileID: 1554162764}
   - component: {fileID: 1554162766}
   - component: {fileID: 1554162765}
+  - component: {fileID: 1554162768}
+  - component: {fileID: 1554162767}
   m_Layer: 5
   m_Name: LevelUpModal
   m_TagString: Untagged
@@ -2656,6 +2703,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1554162763}
   m_CullTransparentMesh: 1
+--- !u!114 &1554162767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554162763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7722ef6ade74545a9eb2e132e2fbee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.UI.Modal.LevelUpModalView
+  <ContentRoot>k__BackingField: {fileID: 0}
+  <OptionCards>k__BackingField:
+  - {fileID: 0}
+--- !u!114 &1554162768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554162763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163b0dd4eded8004ab38cb3e8dcbc1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Controller::Controller.Modal.LevelUpModalController
+  <LevelUpModalView>k__BackingField: {fileID: 1554162767}
 --- !u!1 &1830194456
 GameObject:
   m_ObjectHideFlags: 0
@@ -2849,6 +2924,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Controller::Controller.UI.GameplayUIController
   <XpBarView>k__BackingField: {fileID: 1435676639}
+  <LevelUpModalController>k__BackingField: {fileID: 1554162768}
 --- !u!1 &2109323138
 GameObject:
   m_ObjectHideFlags: 0
@@ -3311,6 +3387,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2035808848}
+  - {fileID: 535579574}
   - {fileID: 2677267518017162830}
   - {fileID: 3334982889174923613}
   - {fileID: 6014344988802098250}

@@ -1,5 +1,5 @@
-using Domain.Drop;
 using Domain.Interface.Loot;
+using Domain.Loot;
 using UnityEngine;
 
 namespace Controller.Drop
