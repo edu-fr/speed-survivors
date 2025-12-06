@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189bdeeccfa1445aabf6ab485a7ad01a, type: 3}
+  m_Name: Peashooter_FireRate
+  m_EditorClassIdentifier: Domain.DTO::Domain.DTO.Upgrades.Base.WeaponBoostUpgrade
+  <Title>k__BackingField: Peashooter Fire Rate
+  <Description>k__BackingField: Increase shoots per second from the Peashooter
+  <Icon>k__BackingField: {fileID: 21300000, guid: 6dbbe10d04e4d90469b8b113c7dc495d, type: 3}
+  <WeaponType>k__BackingField: 1
+  <WeaponStatType>k__BackingField: 3
+  <Amount>k__BackingField: 0.5

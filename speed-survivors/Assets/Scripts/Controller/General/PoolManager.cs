@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Controller.Interface.General;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -24,7 +25,7 @@ namespace Controller.General
 			}
 		}
 
-		public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent) where T : Component
+		public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Component, ISpawnable
 		{
 			var key = prefab.GetInstanceID();
 
@@ -33,18 +34,18 @@ namespace Controller.General
 				CreatePool(key, prefab);
 			}
 
-			var instance = ((ObjectPool<T>)Pools[key]).Get();
-			instance.transform.SetParent(parent);
+			var instance = ((ObjectPool<T>) Pools[key]).Get();
 			instance.transform.SetPositionAndRotation(position, rotation);
 
 			return instance;
 		}
 
-		public void Despawn<T>(T prefab, T instance) where T : Component
+		public void Despawn<T>(T prefab, T instance) where T : Component, ISpawnable
 		{
 			var key = prefab.GetInstanceID();
 			if (Pools.TryGetValue(key, out var pool))
 			{
+				instance.OnDespawn();
 				((ObjectPool<T>)pool).Release(instance);
 			}
 			else
@@ -58,10 +59,24 @@ namespace Controller.General
 
 		private void CreatePool<T>(int key, T prefab) where T : Component
 		{
+			var holderName = $"{prefab.name}_PoolHolder";
+			var holderGameObject = new GameObject(holderName);
+			holderGameObject.transform.SetParent(transform);
+			holderGameObject.transform.localPosition = Vector3.zero;
+
 			var pool = new ObjectPool<T>(
-				createFunc: () => Instantiate(prefab),
+				createFunc: () =>
+				{
+					var obj = Instantiate(prefab, holderGameObject.transform);
+					obj.gameObject.SetActive(false);
+					return obj;
+				},
 				actionOnGet: component => component.gameObject.SetActive(true),
-				actionOnRelease: component => component.gameObject.SetActive(false),
+				actionOnRelease: component =>
+				{
+					component.gameObject.SetActive(false);
+					component.transform.SetParent(holderGameObject.transform);
+				},
 				defaultCapacity: DefaultPoolCapacity,
 				maxSize: DefaultPoolMaxSize
 			);

@@ -1,8 +1,8 @@
-using Controller.Interface.Weapon.Strategy;
 using Controller.Weapon.Ammo;
-using Controller.Weapon.Strategy;
 using Domain.Interface.Weapon.Config;
+using Domain.Interface.Weapon.Strategy;
 using Domain.Weapon.Config;
+using Domain.Weapon.Strategy;
 using UnityEngine;
 
 namespace Controller.Weapon.Arsenal
@@ -12,6 +12,6 @@ namespace Controller.Weapon.Arsenal
 		[field: SerializeField]
 		protected override Projectile ProjectilePrefab { get; set; }
 		public override IWeaponConfig Config { get; } = new ShotgunConfig();
-		protected override IWeaponStrategy Strategy { get; } = new PeaShooterStrategy();
+		protected override IWeaponStrategy Strategy { get; } = new ShotgunStrategy();
 	}
 }

@@ -4,30 +4,17 @@ using UnityEngine;
 
 namespace Controller.Weapon.Ammo
 {
-	public class ProjectileManager : MonoBehaviour
+	public class ProjectileHandler
 	{
 		private const float ProjectileLifetime = 2f;
-
-		[field: SerializeField]
-		private Transform ProjectilePoolParent { get; set; }
-
-		public static ProjectileManager Instance { get; private set; }
 		private List<Projectile> ActiveProjectiles { get; set; }
 
-		private void Awake()
+		public ProjectileHandler()
 		{
-			if (Instance == null)
-			{
-				Instance = this;
-				ActiveProjectiles = new List<Projectile>(PoolManager.DefaultPoolMaxSize);
-			}
-			else
-			{
-				Destroy(gameObject);
-			}
+			ActiveProjectiles = new List<Projectile>();
 		}
 
-		private void Update()
+		public void Tick()
 		{
 			for (int i = ActiveProjectiles.Count - 1; i >= 0; i--)
 			{
@@ -40,7 +27,7 @@ namespace Controller.Weapon.Ammo
 
 		public void SpawnProjectile(Projectile prefab, Vector3 pos, Vector3 dir, float speed, float damage)
 		{
-			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir), ProjectilePoolParent);
+			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir));
 			projectile.Init(prefab, damage, speed, ProjectileLifetime, dir);
 			ActiveProjectiles.Add(projectile);
 		}

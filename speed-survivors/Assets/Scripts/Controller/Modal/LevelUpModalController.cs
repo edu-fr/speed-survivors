@@ -1,22 +1,36 @@
 using System.Collections.Generic;
 using Controller.General;
-using Controller.Mapper;
+using Controller.General.Base;
+using Controller.Player;
 using Domain.DTO;
+using Domain.DTO.Mapper;
 using Domain.Weapon.Config;
 using UnityEngine;
 using View.UI.Modal;
 
 namespace Controller.Modal
 {
-	public class LevelUpModalController : MonoBehaviour
+	public class LevelUpModalController : InitializableMono
 	{
 		[field: SerializeField]
 		private LevelUpModalView LevelUpModalView { get; set; }
 
+		private PlayerUpgradeHandler PlayerUpgradeHandler { get; set; }
 		private int LastHandledLevel { get; set; } = 1;
+
+		public void Init(PlayerUpgradeHandler playerUpgradeHandler)
+		{
+			EnsureStillNotInit();
+
+			PlayerUpgradeHandler = playerUpgradeHandler;
+
+			Initialized = true;
+		}
 
 		public void HandleExperienceUpdate(int currentLevel)
 		{
+			CheckInit();
+
 			if (currentLevel > LastHandledLevel)
 			{
 				LastHandledLevel = currentLevel;
@@ -26,7 +40,7 @@ namespace Controller.Modal
 
 		private void InitiateLevelUpSequence()
 		{
-			GameplayManager.PauseTime(nameof(LevelUpModalController));
+			GameManager.Instance.PauseTime(nameof(LevelUpModalController));
 
 			var options = GetRandomUpgradeOptions();
 
@@ -35,11 +49,11 @@ namespace Controller.Modal
 
 		private void OnUpgradeSelected(UpgradeOptionData selectedUpgrade)
 		{
-			// Apply here on player?
+			CheckInit();
 
 			Debug.Log($"Upgrade Selected: {selectedUpgrade.Title}");
 			LevelUpModalView.Hide();
-			GameplayManager.ResumeTime(nameof(LevelUpModalController));
+			GameManager.Instance.ResumeTime(nameof(LevelUpModalController));
 		}
 
 		private List<UpgradeOptionData> GetRandomUpgradeOptions()
@@ -47,8 +61,8 @@ namespace Controller.Modal
 			// Mock
 			return new List<UpgradeOptionData>
 			{
-				WeaponMapper.ToDTO(new PeaShooterConfig()),
-				WeaponMapper.ToDTO(new ShotgunConfig()),
+				WeaponMapper.ConfigToDTO(new PeaShooterConfig()),
+				WeaponMapper.ConfigToDTO(new ShotgunConfig()),
 			};
 		}
 	}

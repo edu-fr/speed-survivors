@@ -1,43 +1,64 @@
-using Controller.Interface.Weapon.Strategy;
+using Controller.General.Base;
 using Controller.Weapon.Ammo;
+using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
-using UnityEngine;
+using Domain.Interface.Weapon.Strategy;
 
 namespace Controller.Weapon
 {
-	public abstract class WeaponInstance : MonoBehaviour
+	public abstract class WeaponInstance : InitializableMono
 	{
 		/// <summary>
 		/// Serialize field for the projectile prefab associated with this weapon.
 		/// </summary>
 		protected abstract Projectile ProjectilePrefab { get; set; }
 
+		private ProjectileHandler ProjectileHandler { get; set; }
 		public abstract IWeaponConfig Config { get; }
 		protected abstract IWeaponStrategy Strategy { get; }
-		public float CurrentCooldown { get; set; }
+		private float CurrentCooldown { get; set; }
 
-		public virtual void Tick(float deltaTime, bool shouldShoot, float transformCurrentVelocity)
+		public void Init(ProjectileHandler projectileHandler)
 		{
+			EnsureStillNotInit();
+
+			ProjectileHandler = projectileHandler;
+			CurrentCooldown = 0f;
+
+			Initialized = true;
+		}
+
+		public void Tick(float deltaTime, bool shouldShoot, float emitterSpeed)
+		{
+			CheckInit();
+
 			CurrentCooldown -= deltaTime;
 
 			if (CurrentCooldown > 0f)
 				return;
 
 			if (shouldShoot)
-				Fire(transformCurrentVelocity);
+				Fire(emitterSpeed);
 		}
 
-		private void Fire(float transformCurrentVelocity)
+		private void Fire(float emitterSpeed)
 		{
-			// Strategy.Execute(origin, Config); ?
-			ProjectileManager.Instance.SpawnProjectile(
-				ProjectilePrefab,
-				transform.position,
-				Vector3.forward,
-				transformCurrentVelocity + Config.ProjectileSpeed,
-				Config.BaseDamage);
+			var projectileCount = (int) Config.Stats.GetStat(WeaponStatType.ProjectilesPerShot);
+			for (var i = 0; i < projectileCount; i++)
+			{
+				var projectileSpeedMod = Strategy.GetSpeedModifier(i, projectileCount);
+				var projectileDirection = Strategy.GetProjectileDirection(i, projectileCount);
+				var projectilePosition = Strategy.GetPositionModifier(i, projectileCount);
 
-			CurrentCooldown = Config.BaseCooldown;
+				ProjectileHandler.SpawnProjectile(
+					ProjectilePrefab,
+					transform.position + projectilePosition,
+					projectileDirection,
+					emitterSpeed * projectileSpeedMod,
+					Config.Stats.GetStat(WeaponStatType.DamagePerHit));
+			}
+
+			CurrentCooldown = Config.Stats.GetStat(WeaponStatType.FireRate);
 		}
 	}
 }

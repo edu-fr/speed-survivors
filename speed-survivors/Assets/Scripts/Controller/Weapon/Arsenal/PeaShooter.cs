@@ -1,8 +1,8 @@
-using Controller.Interface.Weapon.Strategy;
 using Controller.Weapon.Ammo;
-using Controller.Weapon.Strategy;
 using Domain.Interface.Weapon.Config;
+using Domain.Interface.Weapon.Strategy;
 using Domain.Weapon.Config;
+using Domain.Weapon.Strategy;
 using UnityEngine;
 
 namespace Controller.Weapon.Arsenal

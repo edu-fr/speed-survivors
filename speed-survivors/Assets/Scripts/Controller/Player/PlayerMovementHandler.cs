@@ -1,3 +1,4 @@
+using Domain.Interface.General;
 using Domain.Interface.Player;
 using UnityEngine;
 
@@ -5,12 +6,11 @@ namespace Controller.Player
 {
 	public class PlayerMovementHandler
 	{
-		public float CurrentForwardVelocity => _currentVelocity.z;
 		private IPlayer Player { get; set; }
 		private Transform Transform { get; set; }
 		private float XMoveRange { get; set; }
-		private Vector3 _currentVelocity;
 		private float TargetPositionX { get; set; }
+		private Vector3 _currentVelocity;
 
 		public PlayerMovementHandler(IPlayer player, Transform playerTransform, float xMoveRange, float startingPointX)
 		{
@@ -36,7 +36,7 @@ namespace Controller.Player
 		private float CalculateNextLateralPosition()
 		{
 			var currentX = Transform.position.x;
-			var smoothTime = CalculateSmoothTimeBasedOnSpeed(Player.LateralLateralMoveSpeed);
+			var smoothTime = CalculateSmoothTimeBasedOnSpeed(Player.Stats.GetStat(StatType.LateralMoveSpeed));
 
 			var nextX = Vector3.SmoothDamp(new Vector3(currentX, 0, 0), new Vector3(TargetPositionX, 0, 0),
 				ref _currentVelocity, smoothTime).x;
@@ -46,7 +46,7 @@ namespace Controller.Player
 
 		private float CalculateNextForwardPosition(float deltaTime)
 		{
-			return Transform.position.z + (Player.ForwardMoveSpeed * deltaTime);
+			return Transform.position.z + (Player.Stats.GetStat(StatType.ForwardMoveSpeed) * deltaTime);
 		}
 
 		private void ApplyNextPosition(float x, float z)

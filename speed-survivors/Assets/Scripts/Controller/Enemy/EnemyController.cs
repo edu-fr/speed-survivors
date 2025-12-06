@@ -1,4 +1,5 @@
 using System;
+using Controller.General.Base;
 using Controller.Interface.General;
 using Domain.Enemy;
 using Domain.Interface.Enemy;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace Controller.Enemy
 {
-	public class EnemyController : MonoBehaviour, IHitable
+	public class EnemyController : InitializableMono, IHitable, ISpawnable
 	{
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
@@ -20,13 +21,19 @@ namespace Controller.Enemy
 
 		public void Init()
 		{
+			EnsureStillNotInit();
+
 			Enemy = new Zombie();
 			StoppedByGettingHit = false;
 			OnDeath = null;
+
+			Initialized = true;
 		}
 
 		public bool Tick()
 		{
+			CheckInit();
+
 			HandleMovement();
 
 			return !Enemy.IsDead();
@@ -42,16 +49,22 @@ namespace Controller.Enemy
 
 		public float GetHeight()
 		{
+			CheckInit();
+
 			return Collider.size.y;
 		}
 
 		public void SetPosition(Vector3 position)
 		{
+			CheckInit();
+
 			transform.position = position;
 		}
 
 		public bool TakeHit(float damage)
 		{
+			CheckInit();
+
 			if (Enemy.IsDead())
 				return false;
 
@@ -72,17 +85,28 @@ namespace Controller.Enemy
 
 		public void SubscribeToDeathEvent(Action<EnemyController> callback)
 		{
+			CheckInit();
+
 			OnDeath += callback;
 		}
 
 		public void UnsubscribeFromDeathEvent(Action<EnemyController> callback)
 		{
+			CheckInit();
+
 			OnDeath -= callback;
 		}
 
 		public ILoot GetLoot()
 		{
+			CheckInit();
+
 			return Enemy.Loot;
+		}
+
+		public void OnDespawn()
+		{
+			Initialized = false;
 		}
 	}
 }

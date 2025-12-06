@@ -1,13 +1,16 @@
 using System;
 using Controller.DebugController;
+using Controller.General.Base;
+using Controller.Weapon.Ammo;
 using Data.ScriptableObjects.Generator;
+using Domain.Interface.General;
 using Domain.Interface.Loot;
 using Domain.Interface.Player;
 using UnityEngine;
 
 namespace Controller.Player
 {
-	public class PlayerController : MonoBehaviour
+	public class PlayerController : InitializableMono
 	{
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
@@ -18,35 +21,40 @@ namespace Controller.Player
 		[field: SerializeField]
 		private GrowthConfigGeneratorSO LevelProgressionSO { get; set; }
 
+		private IPlayer Player { get; set; }
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
-		private bool Initialized { get; set; }
-		private IPlayer Player { get; set; }
 		private int XpCollectedSubscribeCount { get; set; }
 
-		public void Init(Camera mainCamera, Vector3 startingPos, float xMoveRange)
+		public void Init(Camera mainCamera, Vector3 startingPos, float xMoveRange, ProjectileHandler projectileHandler)
 		{
+			EnsureStillNotInit();
+
 			Player = new Domain.Player.Player(LevelProgressionSO.ToDomain());
+			WeaponArsenalHandler.Init(Player, projectileHandler);
 			InputHandler = new PlayerInputHandler(mainCamera);
 			MovementHandler = new PlayerMovementHandler(Player, transform, xMoveRange, startingPos.x);
 
 			SetupStartingPosition(startingPos);
-			WeaponArsenalHandler.Init(Player);
 
 			Initialized = true;
 		}
 
 		public void Tick(float deltaTime)
 		{
-			if (!Initialized)
-				return;
+			CheckInit();
 
 			DebugTick();
-
-			WeaponArsenalHandler.Tick(deltaTime, true, MovementHandler.CurrentForwardVelocity);
-
+			WeaponArsenalHandler.Tick(deltaTime, true, Player.Stats.GetStat(StatType.ForwardMoveSpeed));
 			HandleInput();
 			HandleMovement(deltaTime);
+		}
+
+		public IPlayer GetPlayerDomainRef()
+		{
+			CheckInit();
+
+			return Player;
 		}
 
 		private void DebugTick()
@@ -54,11 +62,6 @@ namespace Controller.Player
 			var debugInstance = DebugOverlayManager.Instance;
 			debugInstance.Track("Total XP: ", Player.LevelProgression.TotalExperience);
 			debugInstance.Track("Next level total XP: ", Player.LevelProgression.ExperienceRequiredForNextLevel);
-		}
-
-		public float GetPlayerMagnetRadius()
-		{
-			return Player.MagnetRadius;
 		}
 
 		private void HandleInput()
@@ -93,12 +96,16 @@ namespace Controller.Player
 
 		public void UnsubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
+			CheckInit();
+
 			Player.UnsubscribeFromXpCollected(callback);
 			XpCollectedSubscribeCount--;
 		}
 
 		public (int currentXp, int level, int nextLevelXpDelta) GetCurrentXpData()
 		{
+			CheckInit();
+
 			var progress = Player.LevelProgression;
 			return (progress.CurrentExperience,
 				progress.CurrentLevel,
@@ -109,9 +116,6 @@ namespace Controller.Player
 		{
 			if (InputHandler != null)
 				InputHandler.DisableInput();
-
-			if (WeaponArsenalHandler != null)
-				WeaponArsenalHandler.OnDestroy();
 
 			if (XpCollectedSubscribeCount > 0)
 				throw new InvalidOperationException(

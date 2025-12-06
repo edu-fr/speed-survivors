@@ -9,6 +9,6 @@ namespace Domain.Enemy
 		public override float CurrentHP { get; protected set; } = 10f;
 		public override float MoveSpeed { get; protected set; } = .5f;
 		public override float Damage { get; protected set; } = 10f;
-		public override ILoot Loot { get; protected set; } = Xp(10);
+		public override ILoot Loot { get; protected set; } = Xp(100);
 	}
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Controller.General.Base;
 using Controller.Weapon;
+using Controller.Weapon.Ammo;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
@@ -8,22 +10,35 @@ using UnityEngine;
 
 namespace Controller.Player
 {
-	public class PlayerWeaponArsenalHandler : MonoBehaviour
+	[Serializable]
+	public class PlayerWeaponArsenalHandler : Initializable
 	{
-		[field: SerializeField] private List<WeaponInstance> WeaponInstances { get; set; }
+		/// <summary>
+		/// Contains all weapons available at this point in the game
+		/// </summary>
+		[field: SerializeField]
+		private List<WeaponInstance> WeaponInstances { get; set; }
 
-		private IPlayer Player { get; set; }
 		private Dictionary<WeaponType, WeaponInstance> WeaponInstancesMap { get; set; }
 		private IList<WeaponInstance> ActiveWeaponInstances { get; set; }
+		private IPlayer PlayerDomainRef { get; set; }
+		private ProjectileHandler ProjectileHandler { get; set; }
 
-		public void Init(IPlayer player)
+		public void Init(IPlayer playerDomainRef, ProjectileHandler projectileHandler)
 		{
-			Player = player;
+			EnsureStillNotInitialized();
+
+			PlayerDomainRef = playerDomainRef;
+			ProjectileHandler = projectileHandler;
 			CreateAndSetupWeaponArsenal();
+
+			Initialized = true;
 		}
 
 		public void Tick(float deltaTime, bool shouldShoot, float transformCurrentForwardVelocity)
 		{
+			CheckInit();
+
 			for (var i = 0; i < ActiveWeaponInstances.Count; i++)
 			{
 				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot, transformCurrentForwardVelocity);
@@ -32,11 +47,9 @@ namespace Controller.Player
 
 		private void CreateAndSetupWeaponArsenal()
 		{
-			if (Player == null)
-				throw new InvalidOperationException("Player reference necessary to setup the PlayerWeaponArsenal");
-
 			SetupWeaponInstancesMap();
 			SetupActiveWeaponList();
+			PlayerDomainRef.Arsenal.SubscribeToWeaponAdded(AddWeaponInstance);
 		}
 
 		private void SetupWeaponInstancesMap()
@@ -51,12 +64,10 @@ namespace Controller.Player
 		private void SetupActiveWeaponList()
 		{
 			ActiveWeaponInstances = new List<WeaponInstance>();
-			foreach (var weaponConfig in Player.Arsenal.ActiveWeapons)
+			foreach (var weaponConfig in PlayerDomainRef.Arsenal.ActiveWeapons)
 			{
 				AddWeaponInstance(weaponConfig);
 			}
-
-			Player.Arsenal.SubscribeToWeaponAdded(AddWeaponInstance);
 		}
 
 		private void AddWeaponInstance(IWeaponConfig weaponConfig)
@@ -67,19 +78,16 @@ namespace Controller.Player
 
 			if (ActiveWeaponInstances.Contains(weaponInstance))
 				throw new InvalidOperationException(
-					$"Weapon instance of type {weaponConfig.WeaponType} is already active in PlayerWeaponArsenalHandler.");
+					$"WeaponInstance for WeaponType {weaponConfig.WeaponType} is already active in PlayerWeaponArsenalHandler.");
 
 			weaponInstance.gameObject.SetActive(true);
+			weaponInstance.Init(ProjectileHandler);
 			ActiveWeaponInstances.Add(weaponInstance);
 		}
 
-		public void OnDestroy()
+		~PlayerWeaponArsenalHandler()
 		{
-			if (Player == null)
-				throw new InvalidOperationException(
-					"Player reference is null in OnDestroy from PlayerWeaponArsenalHandler.");
-
-			Player.Arsenal.UnsubscribeFromWeaponAdded(AddWeaponInstance);
+			PlayerDomainRef.Arsenal.UnsubscribeFromWeaponAdded(AddWeaponInstance);
 		}
 	}
 }

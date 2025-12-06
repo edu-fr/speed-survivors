@@ -1,18 +1,18 @@
-using System.Diagnostics;
+using Controller.General.Base;
 using Controller.Interface.General;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Controller.Weapon.Ammo
 {
-	public class Projectile : MonoBehaviour
+	public class Projectile : InitializableMono, ISpawnable
 	{
-		[field: SerializeField] private LayerMask DamageableHurtBoxLayer { get; set; }
+		[field: SerializeField]
+		private LayerMask DamageableHurtBoxLayer { get; set; }
 
-		[field: SerializeField] private MeshRenderer MeshRenderer { get; set; }
+		[field: SerializeField]
+		private MeshRenderer MeshRenderer { get; set; }
 
 		public Projectile Prefab { get; private set; }
-		private float Lifetime { get; set; }
 		private float CurrentTimer { get; set; }
 		private float Speed { get; set; }
 		private float Damage { get; set; }
@@ -22,16 +22,21 @@ namespace Controller.Weapon.Ammo
 
 		public void Init(Projectile prefab, float damage, float speed, float lifetime, Vector3 direction)
 		{
+			EnsureStillNotInit();
+
 			Prefab = prefab;
-			Lifetime = lifetime;
 			CurrentTimer = lifetime;
 			Direction = direction;
 			Speed = speed;
 			Damage = damage;
+
+			Initialized = true;
 		}
 
 		public bool Tick(float deltaTime)
 		{
+			CheckInit();
+
 			CurrentTimer -= deltaTime;
 
 			if (CurrentTimer <= 0f)
@@ -66,20 +71,27 @@ namespace Controller.Weapon.Ammo
 			return true;
 		}
 
-		[Conditional("UNITY_EDITOR")]
-		private void ShowDebugRaycastHit(int hits, Vector3 previousPosition, Vector3 nextPos)
-		{
-			Color debugColor = hits > 0 ? Color.red : Color.green;
-			Debug.DrawLine(previousPosition, nextPos, debugColor, 0.5f);
-		}
+		// [Conditional("UNITY_EDITOR")]
+		// private void ShowDebugRaycastHit(int hits, Vector3 previousPosition, Vector3 nextPos)
+		// {
+		// 	Color debugColor = hits > 0 ? Color.red : Color.green;
+		// 	Debug.DrawLine(previousPosition, nextPos, debugColor, 0.5f);
+		// }
 
 		private bool HandleHit(Collider hitCollider)
 		{
+			Debug.Log($"Projectile hit: {hitCollider.name}");
+
 			var hitable = hitCollider.GetComponentInParent<IHitable>();
 			if (hitable == null)
 				return false;
 
 			return hitable.TakeHit(Damage);
+		}
+
+		public void OnDespawn()
+		{
+			Initialized = false;
 		}
 	}
 }

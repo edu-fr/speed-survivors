@@ -30,7 +30,7 @@ namespace View.UI.Modal
 			ContentRoot.SetActive(isVisible);
 		}
 
-		private void ConfigureCards(List<UpgradeOptionData> upgrades, UnityAction<UpgradeOptionData> onChosenCallback)
+		private void ConfigureCards(List<UpgradeOptionData> upgrades, UnityAction<UpgradeOptionData> onClick)
 		{
 			for (var i = 0; i < OptionCards.Count; i++)
 			{
@@ -38,7 +38,7 @@ namespace View.UI.Modal
 				{
 					var data = upgrades[i];
 					OptionCards[i].gameObject.SetActive(true);
-					OptionCards[i].Initialize(data, () => onChosenCallback.Invoke(data));
+					OptionCards[i].Initialize(data, () => onClick.Invoke(data));
 				}
 				else
 				{

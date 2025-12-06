@@ -2,7 +2,8 @@
     "name": "Domain.DTO",
     "rootNamespace": "",
     "references": [
-    ],
+    "GUID:951de0e85c26d2849b495ffb7cba1464",
+    "GUID:2484d27a6b9ca3d47b22cdc0373cd256"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

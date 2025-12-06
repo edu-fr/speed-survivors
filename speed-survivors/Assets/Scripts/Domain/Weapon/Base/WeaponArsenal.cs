@@ -7,17 +7,21 @@ namespace Domain.Weapon.Base
 {
 	public class WeaponArsenal : IWeaponArsenal
 	{
-		public IList<IWeaponConfig> ActiveWeapons { get; private set; }
+		public IReadOnlyList<IWeaponConfig> ActiveWeapons => _activeWeapons;
+		private List<IWeaponConfig> _activeWeapons { get; set; }
 		private event Action<IWeaponConfig> OnWeaponAdded;
 
 		public WeaponArsenal(IList<IWeaponConfig> startingWeapons = null)
 		{
-			ActiveWeapons = new List<IWeaponConfig>(startingWeapons ?? new List<IWeaponConfig>());
+			_activeWeapons = new List<IWeaponConfig>(startingWeapons ?? new List<IWeaponConfig>());
 		}
 
 		public void AddWeapon(IWeaponConfig weaponConfig)
 		{
-			ActiveWeapons.Add(weaponConfig);
+			if (_activeWeapons.Contains(weaponConfig))
+				throw new InvalidOperationException("Weapon already exists in the player domain arsenal");
+
+			_activeWeapons.Add(weaponConfig);
 			OnWeaponAdded?.Invoke(weaponConfig);
 		}
 

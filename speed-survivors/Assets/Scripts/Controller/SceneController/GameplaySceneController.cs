@@ -1,9 +1,10 @@
 using System;
+using Controller.CustomCamera;
 using Controller.Drop;
 using Controller.Enemy;
-using Controller.General;
 using Controller.Player;
 using Controller.UI;
+using Controller.Weapon.Ammo;
 using Controller.World;
 using UnityEngine;
 
@@ -21,53 +22,78 @@ namespace Controller.SceneController
 		private PlayerController PlayerPrefab { get; set; }
 
 		[field: SerializeField]
-		private EnemyManager EnemyManager { get; set; }
+		private EnemiesHandler EnemiesHandler { get; set; }
 
 		[field: SerializeField]
-		private WorldManager WorldManager { get; set; }
+		private DropHandler DropHandler { get; set; }
 
 		[field: SerializeField]
-		private CameraController CameraController { get; set; }
+		private WorldBuildHandler WorldBuildHandler { get; set; }
 
 		[field: SerializeField]
-		private GameplayUIController UIController { get; set; }
+		private FollowingCameraHandler FollowingCameraHandler { get; set; }
+
+		[field: SerializeField]
+		private GameplayUIHandler UIHandler { get; set; }
+
+		private PlayerUpgradeHandler PlayerUpgradeHandler { get; set; }
+		private ProjectileHandler ProjectileHandler { get; set; }
 
 		private PlayerController PlayerController { get; set; }
 		private bool GameplayStarted { get; set; }
 
-		public void SetupScene()
+		private void Start()
 		{
-			PlayerController = Instantiate(PlayerPrefab);
-			PlayerController.Init(MainCamera, StartingPoint.position, WorldManager.DefaultSegmentTransformSize.x / 2f);
-			var playerTransform = PlayerController.transform;
-			UIController.Init(PlayerController);
-			WorldManager.Init(playerTransform);
-			WorldManager.SpawnInitialWorldSections();
-			CameraController.Init(playerTransform);
-			EnemyManager.Init(playerTransform);
-			DropManager.Instance.Init(PlayerController, PlayerController.GetPlayerMagnetRadius());
+			SetupScene();
+			StartGameplay();
 		}
 
-		public void StartGameplay()
+		public void Update()
+		{
+			if (!GameplayStarted)
+				return;
+
+			var deltaTime = Time.deltaTime;
+			PlayerController.Tick(deltaTime);
+			ProjectileHandler.Tick();
+			EnemiesHandler.Tick(deltaTime);
+			WorldBuildHandler.Tick();
+			DropHandler.Tick();
+		}
+
+		public void LateUpdate()
+		{
+			if (!GameplayStarted)
+				return;
+
+			FollowingCameraHandler.LateTick();
+			EnemiesHandler.LateTick();
+		}
+
+		private void SetupScene()
+		{
+			ProjectileHandler = new ProjectileHandler();
+			PlayerController = Instantiate(PlayerPrefab);
+			PlayerController.Init(MainCamera, StartingPoint.position, WorldBuildHandler.DefaultSegmentTransformSize.x / 2f, ProjectileHandler);
+			PlayerUpgradeHandler = new PlayerUpgradeHandler(PlayerController.GetPlayerDomainRef());
+			UIHandler.Init(PlayerController, PlayerUpgradeHandler);
+			DropHandler.Init(PlayerController);
+
+			var playerTransform = PlayerController.transform;
+			FollowingCameraHandler.Init(playerTransform);
+			EnemiesHandler.Init(playerTransform, DropHandler);
+			WorldBuildHandler.Init(playerTransform);
+			WorldBuildHandler.SpawnInitialWorldSections();
+		}
+
+		private void StartGameplay()
 		{
 			if (GameplayStarted)
 				throw new InvalidOperationException("Gameplay already started");
 
-			EnemyManager.StartSpawn();
+			EnemiesHandler.StartSpawn();
 			GameplayStarted = true;
 		}
 
-		public void Tick()
-		{
-			var deltaTime = Time.deltaTime;
-			PlayerController.Tick(deltaTime);
-			EnemyManager.Tick(deltaTime);
-			WorldManager.Tick();
-		}
-
-		public void LateTick()
-		{
-			CameraController.LateTick();
-		}
 	}
 }

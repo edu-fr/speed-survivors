@@ -1,3 +1,4 @@
+using Domain.Interface.General;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
 
@@ -6,9 +7,12 @@ namespace Domain.Weapon.Config
 	public class PeaShooterConfig : IWeaponConfig
 	{
 		public WeaponType WeaponType => WeaponType.PeaShooter;
-		public float BaseDamage => 5;
-		public float Range => 20;
-		public float BaseCooldown => 0.4f;
-		public float ProjectileSpeed => 10f;
+		public IStats<WeaponStatType> Stats { get; } = new WeaponStats(
+			5,
+			20,
+			1,
+			0.4f,
+			2f,
+			0f);
 	}
 }

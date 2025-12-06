@@ -1,8 +1,9 @@
+using Controller.Interface.General;
 using UnityEngine;
 
 namespace Controller.World
 {
-	public class WorldSection : MonoBehaviour
+	public class WorldSection : MonoBehaviour, ISpawnable
 	{
 		[Header("References")]
 		[field: SerializeField]
@@ -39,6 +40,11 @@ namespace Controller.World
 			var sizeZ = rawMeshSizeZ * GroundObject.localScale.z * transform.localScale.z;
 
 			SectionTransformSize = new Vector3(sizeX, sizeY, sizeZ);
+		}
+
+		public void OnDespawn()
+		{
+			// Nothing to clean up for now
 		}
 	}
 }
