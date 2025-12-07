@@ -6,9 +6,7 @@ using Domain.Interface.General;
 using Domain.Interface.Loot;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
-using Domain.Interface.Weapon.Config;
 using Domain.Weapon.Base;
-using Domain.Weapon.Config;
 
 namespace Domain.Player
 {
@@ -32,7 +30,7 @@ namespace Domain.Player
 		{
 			Stats = new PlayerStats();
 			CurrentHP = Stats.GetStat(StatType.Health);
-			Arsenal = new WeaponArsenal(new List<IWeaponConfig>() { new PeaShooterConfig() });
+			Arsenal = new WeaponArsenal(new List<WeaponType>() { WeaponType.PeaShooter });
 			LevelProgression = new LevelProgression(growthConfig);
 		}
 

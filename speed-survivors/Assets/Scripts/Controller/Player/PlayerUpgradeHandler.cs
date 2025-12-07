@@ -1,4 +1,5 @@
 using Domain.Interface.Player;
+using Domain.Interface.Upgrade;
 
 namespace Controller.Player
 {
@@ -9,6 +10,16 @@ namespace Controller.Player
 		public PlayerUpgradeHandler(IPlayer playerDomainRef)
 		{
 			PlayerDomainRef = playerDomainRef;
+		}
+
+		public void HandleUpgrade(IUpgrade upgrade)
+		{
+			upgrade.Apply(PlayerDomainRef);
+		}
+
+		public IPlayer GetPlayerDomainRef()
+		{
+			return PlayerDomainRef;
 		}
 	}
 }

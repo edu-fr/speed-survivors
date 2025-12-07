@@ -6,6 +6,6 @@ namespace Domain.Interface.General
 		LateralMoveSpeed,
 		ForwardMoveSpeed,
 		Damage,
-		MagnetRadius
+		MagnetRange
 	}
 }

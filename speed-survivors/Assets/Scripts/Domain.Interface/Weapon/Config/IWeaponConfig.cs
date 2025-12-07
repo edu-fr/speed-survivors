@@ -1,4 +1,3 @@
-using Domain.Interface.General;
 using Domain.Interface.Weapon.Base;
 
 namespace Domain.Interface.Weapon.Config
@@ -6,6 +5,6 @@ namespace Domain.Interface.Weapon.Config
 	public interface IWeaponConfig
 	{
 		WeaponType WeaponType { get; }
-		IStats<WeaponStatType> Stats { get; }
+		float GetStat(WeaponStatType type, int level);
 	}
 }

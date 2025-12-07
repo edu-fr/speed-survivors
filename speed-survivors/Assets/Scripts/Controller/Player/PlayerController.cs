@@ -121,5 +121,16 @@ namespace Controller.Player
 				throw new InvalidOperationException(
 					$"PlayerController was destroyed but there are still {XpCollectedSubscribeCount} subscriptions to XP collected events. Make sure to unsubscribe properly to avoid memory leaks.");
 		}
+
+		public float GetMagnetRangeSquared()
+		{
+			var magnetRange = Player.Stats.GetStat(StatType.MagnetRange);
+			return magnetRange * magnetRange;
+		}
+
+		public float GetCurrentForwardSpeed()
+		{
+			return Player.Stats.GetStat(StatType.ForwardMoveSpeed);
+		}
 	}
 }

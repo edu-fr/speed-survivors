@@ -80,8 +80,6 @@ namespace Controller.Weapon.Ammo
 
 		private bool HandleHit(Collider hitCollider)
 		{
-			Debug.Log($"Projectile hit: {hitCollider.name}");
-
 			var hitable = hitCollider.GetComponentInParent<IHitable>();
 			if (hitable == null)
 				return false;

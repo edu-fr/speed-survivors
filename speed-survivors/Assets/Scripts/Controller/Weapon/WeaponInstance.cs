@@ -12,7 +12,6 @@ namespace Controller.Weapon
 		/// Serialize field for the projectile prefab associated with this weapon.
 		/// </summary>
 		protected abstract Projectile ProjectilePrefab { get; set; }
-
 		private ProjectileHandler ProjectileHandler { get; set; }
 		public abstract IWeaponConfig Config { get; }
 		protected abstract IWeaponStrategy Strategy { get; }
@@ -28,7 +27,7 @@ namespace Controller.Weapon
 			Initialized = true;
 		}
 
-		public void Tick(float deltaTime, bool shouldShoot, float emitterSpeed)
+		public void Tick(float deltaTime, bool shouldShoot, float emitterSpeed, int weaponLevel)
 		{
 			CheckInit();
 
@@ -38,12 +37,12 @@ namespace Controller.Weapon
 				return;
 
 			if (shouldShoot)
-				Fire(emitterSpeed);
+				Fire(emitterSpeed, weaponLevel);
 		}
 
-		private void Fire(float emitterSpeed)
+		private void Fire(float emitterSpeed, int weaponLevel)
 		{
-			var projectileCount = (int) Config.Stats.GetStat(WeaponStatType.ProjectilesPerShot);
+			var projectileCount = (int) Config.GetStat(WeaponStatType.ProjectilesPerShot, weaponLevel);
 			for (var i = 0; i < projectileCount; i++)
 			{
 				var projectileSpeedMod = Strategy.GetSpeedModifier(i, projectileCount);
@@ -55,10 +54,10 @@ namespace Controller.Weapon
 					transform.position + projectilePosition,
 					projectileDirection,
 					emitterSpeed * projectileSpeedMod,
-					Config.Stats.GetStat(WeaponStatType.DamagePerHit));
+					Config.GetStat(WeaponStatType.DamagePerHit, weaponLevel));
 			}
 
-			CurrentCooldown = Config.Stats.GetStat(WeaponStatType.FireRate);
+			CurrentCooldown = Config.GetStat(WeaponStatType.FireRate, weaponLevel);
 		}
 	}
 }

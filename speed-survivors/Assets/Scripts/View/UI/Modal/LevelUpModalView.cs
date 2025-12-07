@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Domain.DTO;
+using Domain.Interface.Upgrade;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,7 +14,7 @@ namespace View.UI.Modal
 		[field: SerializeField]
 		private List<UpgradeOptionView> OptionCards { get; set; }
 
-		public void DisplayOptions(List<UpgradeOptionData> upgrades, UnityAction<UpgradeOptionData> onChosenCallback)
+		public void DisplayOptions(List<IUpgrade> upgrades, UnityAction<IUpgrade> onChosenCallback)
 		{
 			ConfigureCards(upgrades, onChosenCallback);
 			SetVisibility(true);
@@ -30,7 +30,7 @@ namespace View.UI.Modal
 			ContentRoot.SetActive(isVisible);
 		}
 
-		private void ConfigureCards(List<UpgradeOptionData> upgrades, UnityAction<UpgradeOptionData> onClick)
+		private void ConfigureCards(List<IUpgrade> upgrades, UnityAction<IUpgrade> onClick)
 		{
 			for (var i = 0; i < OptionCards.Count; i++)
 			{

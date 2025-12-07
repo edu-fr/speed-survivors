@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using Controller.General;
 using Controller.General.Base;
 using Controller.Player;
-using Domain.DTO;
-using Domain.DTO.Mapper;
-using Domain.Weapon.Config;
+using Domain.Interface.Upgrade;
+using Domain.Upgrade;
 using UnityEngine;
 using View.UI.Modal;
 
@@ -42,28 +40,22 @@ namespace Controller.Modal
 		{
 			GameManager.Instance.PauseTime(nameof(LevelUpModalController));
 
-			var options = GetRandomUpgradeOptions();
+			var options =
+				UpgradeDictGenerator.GetRandomEligibleUpgrades(PlayerUpgradeHandler.GetPlayerDomainRef(), 3);
 
 			LevelUpModalView.DisplayOptions(options, OnUpgradeSelected);
 		}
 
-		private void OnUpgradeSelected(UpgradeOptionData selectedUpgrade)
+		private void OnUpgradeSelected(IUpgrade selectedUpgrade)
 		{
 			CheckInit();
 
 			Debug.Log($"Upgrade Selected: {selectedUpgrade.Title}");
-			LevelUpModalView.Hide();
-			GameManager.Instance.ResumeTime(nameof(LevelUpModalController));
-		}
 
-		private List<UpgradeOptionData> GetRandomUpgradeOptions()
-		{
-			// Mock
-			return new List<UpgradeOptionData>
-			{
-				WeaponMapper.ConfigToDTO(new PeaShooterConfig()),
-				WeaponMapper.ConfigToDTO(new ShotgunConfig()),
-			};
+			PlayerUpgradeHandler.HandleUpgrade(selectedUpgrade);
+			LevelUpModalView.Hide();
+
+			GameManager.Instance.ResumeTime(nameof(LevelUpModalController));
 		}
 	}
 }

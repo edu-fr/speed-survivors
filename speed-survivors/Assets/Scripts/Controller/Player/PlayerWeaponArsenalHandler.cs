@@ -5,7 +5,6 @@ using Controller.Weapon;
 using Controller.Weapon.Ammo;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
-using Domain.Interface.Weapon.Config;
 using UnityEngine;
 
 namespace Controller.Player
@@ -41,7 +40,8 @@ namespace Controller.Player
 
 			for (var i = 0; i < ActiveWeaponInstances.Count; i++)
 			{
-				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot, transformCurrentForwardVelocity);
+				var weaponLevel = PlayerDomainRef.Arsenal.GetWeaponLevel(ActiveWeaponInstances[i].Config.WeaponType);
+				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot, transformCurrentForwardVelocity, weaponLevel);
 			}
 		}
 
@@ -61,28 +61,31 @@ namespace Controller.Player
 			}
 		}
 
+		// Necessary because when the Domain was created the ArsenalHandler was not subscribed to its changes yet
 		private void SetupActiveWeaponList()
 		{
 			ActiveWeaponInstances = new List<WeaponInstance>();
-			foreach (var weaponConfig in PlayerDomainRef.Arsenal.ActiveWeapons)
+			foreach (var weaponType in PlayerDomainRef.Arsenal.StartingWeapons)
 			{
-				AddWeaponInstance(weaponConfig);
+				AddWeaponInstance(weaponType);
 			}
 		}
 
-		private void AddWeaponInstance(IWeaponConfig weaponConfig)
+		private void AddWeaponInstance(WeaponType weaponType)
 		{
-			if (!WeaponInstancesMap.TryGetValue(weaponConfig.WeaponType, out var weaponInstance))
+			if (!WeaponInstancesMap.TryGetValue(weaponType, out var weaponInstance))
 				throw new InvalidOperationException(
-					$"No WeaponInstance found for WeaponType {weaponConfig.WeaponType} in WeaponInstancesDict at PlayerWeaponArsenalHandler.");
+					$"No WeaponInstance found for WeaponType {weaponType} in WeaponInstancesDict at PlayerWeaponArsenalHandler.");
 
 			if (ActiveWeaponInstances.Contains(weaponInstance))
 				throw new InvalidOperationException(
-					$"WeaponInstance for WeaponType {weaponConfig.WeaponType} is already active in PlayerWeaponArsenalHandler.");
+					$"WeaponInstance for WeaponType {weaponType} is already active in PlayerWeaponArsenalHandler.");
 
 			weaponInstance.gameObject.SetActive(true);
 			weaponInstance.Init(ProjectileHandler);
 			ActiveWeaponInstances.Add(weaponInstance);
+
+			Debug.Log($"Added {weaponType} to Active Weapons Instances");
 		}
 
 		~PlayerWeaponArsenalHandler()

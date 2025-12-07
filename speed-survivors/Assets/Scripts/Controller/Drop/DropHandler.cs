@@ -16,9 +16,7 @@ namespace Controller.Drop
 	public class DropHandler : Initializable
 	{
 		[Header("Magnet Config")]
-		private const float MagnetRadiusSqr = 4f * 4f;
-
-		private const float MagnetSpeed = 15f;
+		private const float MagnetSpeed = 5f;
 
 		[Header("Drop Movement Config")]
 		private const float DropArcHeight = 1.5f;
@@ -164,7 +162,7 @@ namespace Controller.Drop
 
 			var distanceSquared = (distanceX * distanceX) + (distanceZ * distanceZ);
 
-			if (distanceSquared < MagnetRadiusSqr)
+			if (distanceSquared < PlayerController.GetMagnetRangeSquared())
 			{
 				item.SetMagnetized();
 			}
@@ -179,7 +177,7 @@ namespace Controller.Drop
 
 			var currentPosition = item.TransformCache.position;
 			var directionVector = playerPosition - currentPosition;
-			var moveDistance = MagnetSpeed * deltaTime;
+			var moveDistance = (PlayerController.GetCurrentForwardSpeed() + MagnetSpeed) * deltaTime;
 
 			if (directionVector.sqrMagnitude <= moveDistance * moveDistance)
 			{

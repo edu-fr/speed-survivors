@@ -5,7 +5,7 @@ namespace Domain.Weapon.Strategy
 {
 	public class ShotgunStrategy : ProjectileStrategy
 	{
-		const float SpreadAngle = 15f;
+		const float SpreadAngle = 5f;
 		public override Vector3 GetProjectileDirection(int projectileIndex, int totalProjectiles)
 		{
 			var startAngle = -SpreadAngle * (totalProjectiles - 1) / 2;

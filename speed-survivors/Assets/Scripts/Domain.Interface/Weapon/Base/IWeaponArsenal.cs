@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Domain.Interface.Weapon.Config;
 
 namespace Domain.Interface.Weapon.Base
 {
 	public interface IWeaponArsenal
 	{
-		IReadOnlyList<IWeaponConfig> ActiveWeapons { get; }
-		void AddWeapon(IWeaponConfig weaponConfig);
-		public void SubscribeToWeaponAdded(Action<IWeaponConfig> callback);
-		public void UnsubscribeFromWeaponAdded(Action<IWeaponConfig> callback);
+		IList<WeaponType> StartingWeapons { get; }
+		void AddWeapon(WeaponType weaponConfig);
+		void UpdateWeaponLevel(WeaponType weaponType, int newLevel);
+		bool HasWeapon(WeaponType weaponType);
+		int GetWeaponLevel(WeaponType weaponType);
+		public void SubscribeToWeaponAdded(Action<WeaponType> callback);
+		public void UnsubscribeFromWeaponAdded(Action<WeaponType> callback);
 	}
 }

@@ -1,38 +1,66 @@
 using System;
 using System.Collections.Generic;
 using Domain.Interface.Weapon.Base;
-using Domain.Interface.Weapon.Config;
 
 namespace Domain.Weapon.Base
 {
 	public class WeaponArsenal : IWeaponArsenal
 	{
-		public IReadOnlyList<IWeaponConfig> ActiveWeapons => _activeWeapons;
-		private List<IWeaponConfig> _activeWeapons { get; set; }
-		private event Action<IWeaponConfig> OnWeaponAdded;
+		public IList<WeaponType> StartingWeapons { get; }
+		private Dictionary<WeaponType, int> ActiveWeapons { get; set; }
+		private event Action<WeaponType> OnWeaponAdded;
 
-		public WeaponArsenal(IList<IWeaponConfig> startingWeapons = null)
+		public WeaponArsenal(IList<WeaponType> startingWeapons = null)
 		{
-			_activeWeapons = new List<IWeaponConfig>(startingWeapons ?? new List<IWeaponConfig>());
+			ActiveWeapons = new Dictionary<WeaponType, int>();
+			if (startingWeapons == null)
+				return;
+
+			StartingWeapons = startingWeapons;
+
+			foreach (var weapon in startingWeapons)
+			{
+				ActiveWeapons[weapon] = 1; // Initialize starting weapons at level 1
+			}
 		}
 
-		public void AddWeapon(IWeaponConfig weaponConfig)
+		public void AddWeapon(WeaponType weaponType)
 		{
-			if (_activeWeapons.Contains(weaponConfig))
-				throw new InvalidOperationException("Weapon already exists in the player domain arsenal");
+			if (!ActiveWeapons.TryAdd(weaponType, 1))
+				throw new InvalidOperationException("Weapon already present in player domain arsenal");
 
-			_activeWeapons.Add(weaponConfig);
-			OnWeaponAdded?.Invoke(weaponConfig);
+			OnWeaponAdded?.Invoke(weaponType);
 		}
 
-		public void SubscribeToWeaponAdded(Action<IWeaponConfig> callback)
+		public bool HasWeapon(WeaponType weaponType)
+		{
+			return ActiveWeapons.ContainsKey(weaponType);
+		}
+
+		public int GetWeaponLevel(WeaponType weaponType)
+		{
+			if (!ActiveWeapons.TryGetValue(weaponType, out var level))
+				throw new InvalidOperationException("Weapon not present in player domain arsenal");
+
+			return level;
+		}
+
+		public void SubscribeToWeaponAdded(Action<WeaponType> callback)
 		{
 			OnWeaponAdded += callback;
 		}
 
-		public void UnsubscribeFromWeaponAdded(Action<IWeaponConfig> callback)
+		public void UnsubscribeFromWeaponAdded(Action<WeaponType> callback)
 		{
 			OnWeaponAdded -= callback;
+		}
+
+		public void UpdateWeaponLevel(WeaponType weaponType, int level)
+		{
+			if (!ActiveWeapons.ContainsKey(weaponType))
+				throw new InvalidOperationException("Weapon not present in player domain arsenal");
+
+			ActiveWeapons[weaponType] = level;
 		}
 	}
 }

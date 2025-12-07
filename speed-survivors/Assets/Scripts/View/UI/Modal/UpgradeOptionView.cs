@@ -1,4 +1,4 @@
-using Domain.DTO;
+using Domain.Interface.Upgrade;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,12 +22,13 @@ namespace View.UI.Modal
 		[field: SerializeField]
 		private TextMeshProUGUI DescriptionText { get; set; }
 
-		public void Initialize(UpgradeOptionData data, UnityAction onSelected)
+		public void Initialize(IUpgrade data, UnityAction onSelected)
 		{
 			TitleText.text = data.Title;
 			DescriptionText.text = data.Description;
-			IconImage.sprite = data.Icon;
-			IconImage.gameObject.SetActive(data.Icon != null);
+			IconImage.sprite = null;
+			IconImage.gameObject.SetActive(true);
+			CardButton.interactable = true;
 
 			SetupInteraction(onSelected);
 		}
