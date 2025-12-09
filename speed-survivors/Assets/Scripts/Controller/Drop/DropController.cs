@@ -1,5 +1,5 @@
-using Controller.General.Base;
-using Controller.Interface.General;
+using Controller.General;
+using Controller.Interface;
 using Domain.Interface.Loot;
 using Domain.Loot;
 using UnityEngine;

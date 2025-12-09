@@ -1,4 +1,4 @@
-using Controller.General.Base;
+using Controller.General;
 using Controller.Weapon.Ammo;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;

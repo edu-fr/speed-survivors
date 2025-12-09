@@ -1,10 +1,12 @@
-namespace Controller.General.Base
+using UnityEngine;
+
+namespace Controller.General
 {
-	public abstract class Initializable
+	public abstract class InitializableMono : MonoBehaviour
 	{
 		protected bool Initialized { get; set; }
 
-		protected void EnsureStillNotInitialized()
+		protected void EnsureStillNotInit()
 		{
 			if (Initialized)
 				throw new System.InvalidOperationException(

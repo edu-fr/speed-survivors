@@ -14,9 +14,9 @@ namespace Domain.Player
 			StatDict = new Dictionary<StatType, float>
 			{
 				{ StatType.Health, 100f },
-				{ StatType.ForwardMoveSpeed, 15f },
+				{ StatType.ForwardMoveSpeed, 05f },
 				{ StatType.LateralMoveSpeed, 10f },
-				{ StatType.Damage, 5f },
+				{ StatType.Damage, 3f },
 				{ StatType.MagnetRange, 1.2f }
 			};
 		}

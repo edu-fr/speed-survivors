@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6384463862868567997}
   - component: {fileID: 1288951342487046251}
   - component: {fileID: 8061547642615952409}
+  - component: {fileID: 3646072822500546416}
+  - component: {fileID: 2561747020787698799}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -104,6 +106,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Controller::Controller.Enemy.EnemyController
   <Collider>k__BackingField: {fileID: 4768233108452804197}
+  <View>k__BackingField: {fileID: 3646072822500546416}
+--- !u!114 &3646072822500546416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2346414993203648696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d027eb5edef04563a34f48d229e0c386, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.Enemy.EnemyView
+  <HitFeedbackView>k__BackingField: {fileID: 2561747020787698799}
+--- !u!114 &2561747020787698799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2346414993203648696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046acc45e4a34ed79d32472248043160, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.General.HitFeedbackView
+  <TargetRenderer>k__BackingField: {fileID: 1288951342487046251}
 --- !u!1 &6714292427054742630
 GameObject:
   m_ObjectHideFlags: 0

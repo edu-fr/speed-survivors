@@ -1,6 +1,6 @@
 using System;
 using Controller.DebugController;
-using Controller.General.Base;
+using Controller.General;
 using Controller.Weapon.Ammo;
 using Data.ScriptableObjects.Generator;
 using Domain.Interface.General;

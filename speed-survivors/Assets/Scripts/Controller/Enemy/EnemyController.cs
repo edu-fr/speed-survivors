@@ -1,48 +1,66 @@
 using System;
-using Controller.General.Base;
-using Controller.Interface.General;
+using Controller.General;
+using Controller.Interface;
 using Domain.Enemy;
 using Domain.Interface.Enemy;
 using Domain.Interface.Loot;
 using UnityEngine;
+using View.Enemy;
 
 namespace Controller.Enemy
 {
 	public class EnemyController : InitializableMono, IHitable, ISpawnable
 	{
+		private const float DefaultMovementRecoverTime = .3f;
+
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
 
+		[field: SerializeField]
+		private EnemyView View { get; set; }
+
 		private IEnemy Enemy { get; set; }
-		private bool StoppedByGettingHit { get; set; }
 
 		private readonly Vector3 _moveDirection = Vector3.back;
 		public event Action<EnemyController> OnDeath;
+
+		private bool _stoppedByGettingHit;
+		private float _currentMovementRecoverTime;
 
 		public void Init()
 		{
 			EnsureStillNotInit();
 
 			Enemy = new Zombie();
-			StoppedByGettingHit = false;
+			_stoppedByGettingHit = false;
 			OnDeath = null;
+			View.Setup();
 
 			Initialized = true;
 		}
 
-		public bool Tick()
+		public bool Tick(float dt)
 		{
 			CheckInit();
 
-			HandleMovement();
+			HandleMovement(dt);
+			View.Tick(dt);
 
 			return !Enemy.IsDead();
 		}
 
-		private void HandleMovement()
+		private void HandleMovement(float dt)
 		{
-			if (StoppedByGettingHit)
-				return;
+			if (_stoppedByGettingHit)
+			{
+				_currentMovementRecoverTime -= dt;
+				if (_currentMovementRecoverTime > 0f)
+				{
+					return;
+				}
+
+				_stoppedByGettingHit = false;
+			}
 
 			transform.Translate(_moveDirection * (Enemy.MoveSpeed * Time.deltaTime));
 		}
@@ -68,19 +86,15 @@ namespace Controller.Enemy
 			if (Enemy.IsDead())
 				return false;
 
+			View.PlayHitFeedback();
 			Enemy.TakeDamage(damage);
-			StoppedByGettingHit = true;
-			Invoke(nameof(ResetMovement), 0.3f);
+			_stoppedByGettingHit = true;
+			_currentMovementRecoverTime = DefaultMovementRecoverTime;
 
 			if (Enemy.IsDead())
 				OnDeath?.Invoke(this);
 
 			return true;
-		}
-
-		private void ResetMovement()
-		{
-			StoppedByGettingHit = false;
 		}
 
 		public void SubscribeToDeathEvent(Action<EnemyController> callback)

@@ -1,4 +1,4 @@
-using Controller.Interface.General;
+using Controller.Interface;
 using UnityEngine;
 
 namespace Controller.World

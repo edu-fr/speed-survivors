@@ -1,4 +1,4 @@
-namespace Controller.Interface.General
+namespace Controller.Interface
 {
 	public interface IHitable
 	{

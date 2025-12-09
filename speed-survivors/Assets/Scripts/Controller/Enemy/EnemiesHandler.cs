@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Controller.Drop;
 using Controller.General;
-using Controller.General.Base;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,7 +10,7 @@ namespace Controller.Enemy
 	[Serializable]
 	public class EnemiesHandler : Initializable
 	{
-		private const float SpawnCooldown = 1f;
+		private const float SpawnCooldown = 0.3f;
 
 		[field: SerializeField]
 		private EnemyController EnemyPrefab { get; set; }
@@ -43,12 +42,12 @@ namespace Controller.Enemy
 			Initialized = true;
 		}
 
-		public void Tick(float deltaTime)
+		public void Tick(float dt)
 		{
 			CheckInit();
 
-			SpawnLoop(deltaTime);
-			ActiveEnemiesLoop();
+			SpawnLoop(dt);
+			ActiveEnemiesLoop(dt);
 		}
 
 		public void LateTick()
@@ -83,11 +82,11 @@ namespace Controller.Enemy
 			SpawnEnemy();
 		}
 
-		private void ActiveEnemiesLoop()
+		private void ActiveEnemiesLoop(float dt)
 		{
 			for (var i = ActiveEnemies.Count - 1; i >= 0; i--)
 			{
-				if (!ActiveEnemies[i].Tick())
+				if (!ActiveEnemies[i].Tick(dt))
 				{
 					DespawnEnemy(ActiveEnemies[i], i);
 				}

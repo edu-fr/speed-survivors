@@ -1,5 +1,5 @@
 using System;
-using Controller.General.Base;
+using Controller.General;
 using UnityEngine;
 
 namespace Controller.CustomCamera

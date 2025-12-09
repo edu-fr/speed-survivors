@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Controller.General.Base;
+using Controller.General;
 using Controller.Weapon;
 using Controller.Weapon.Ammo;
 using Domain.Interface.Player;
