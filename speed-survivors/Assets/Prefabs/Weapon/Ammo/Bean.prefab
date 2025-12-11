@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4413618640923410977}
   - component: {fileID: 581860848515033379}
   m_Layer: 0
-  m_Name: Buckshot
+  m_Name: Bean
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -14,6 +14,7 @@ namespace Domain.Weapon.Config
 			[WeaponStatType.FireRate] =               new[] { 1.2f, 1.1f, 1f, 1f, 0.9f },
 			[WeaponStatType.ProjectileForwardSpeed] = new[] { 2f, 2f, 2f, 2, 4f },
 			[WeaponStatType.ProjectileLateralSpeed] = new[] { 0f, 0f, 0f, 0f, 0f },
+			[WeaponStatType.AreaOfEffectRadius] =     new[] { 0f, 0f, 0f, 0f, 0f },
 		};
 	}
 }

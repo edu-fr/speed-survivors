@@ -6,7 +6,6 @@ namespace Controller.Weapon.Ammo
 {
 	public class ProjectileHandler
 	{
-		private const float ProjectileLifetime = 2f;
 		private List<Projectile> ActiveProjectiles { get; set; }
 
 		public ProjectileHandler()
@@ -25,10 +24,18 @@ namespace Controller.Weapon.Ammo
 			}
 		}
 
-		public void SpawnProjectile(Projectile prefab, Vector3 pos, Vector3 dir, float speed, float damage)
+		public void SpawnProjectile(Projectile prefab,
+			Vector3 pos,
+			Vector3 dir,
+			Vector3 maxOffset,
+			float speed,
+			float damage,
+			float lifetime,
+			float areaOfEffectRadius,
+			bool parabolicMovement)
 		{
 			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir));
-			projectile.Init(prefab, damage, speed, ProjectileLifetime, dir);
+			projectile.Init(prefab, damage, speed, lifetime, dir, maxOffset, areaOfEffectRadius, parabolicMovement);
 			ActiveProjectiles.Add(projectile);
 		}
 

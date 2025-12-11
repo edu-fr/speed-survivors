@@ -34,6 +34,7 @@ RectTransform:
   m_Children:
   - {fileID: 5921918144559452752}
   - {fileID: 3920176753579657224}
+  - {fileID: 3580535017710961276}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -58,6 +59,7 @@ MonoBehaviour:
     <WeaponInstances>k__BackingField:
     - {fileID: 534116344964972198}
     - {fileID: 4107878675408511172}
+    - {fileID: 532617407192231043}
   <LevelProgressionSO>k__BackingField: {fileID: 11400000, guid: 3cb1ea307e3d9e04ab9106703f0b1c39, type: 2}
 --- !u!33 &384644390399106325
 MeshFilter:
@@ -290,3 +292,84 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642d6a2a6d544d0aa978e0c5b92606be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Controller::Controller.Weapon.Arsenal.Shotgun
+--- !u!1001 &5608207861913469005
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4407030525837094218}
+    m_Modifications:
+    - target: {fileID: 1043177421516314507, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_Name
+      value: GranadeLauncher
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043177421516314507, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381915781628308686, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.436
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.38268343
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+--- !u!114 &532617407192231043 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5381915781628308686, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+  m_PrefabInstance: {fileID: 5608207861913469005}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 332281f9e8854214b2f2cfb18e112024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Controller::Controller.Weapon.Arsenal.GrenadeLauncher
+--- !u!4 &3580535017710961276 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8963507922389008945, guid: b861b7495717b4844a99ff02106a3862, type: 3}
+  m_PrefabInstance: {fileID: 5608207861913469005}
+  m_PrefabAsset: {fileID: 0}

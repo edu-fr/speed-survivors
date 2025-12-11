@@ -48,13 +48,18 @@ namespace Controller.Weapon
 				var projectileSpeedMod = Strategy.GetSpeedModifier(i, projectileCount);
 				var projectileDirection = Strategy.GetProjectileDirection(i, projectileCount);
 				var projectilePosition = Strategy.GetPositionModifier(i, projectileCount);
+				var projectileMaxOffset = Strategy.GetMaxOffsetPosition(i, projectileCount);
 
 				ProjectileHandler.SpawnProjectile(
 					ProjectilePrefab,
 					transform.position + projectilePosition,
 					projectileDirection,
-					emitterSpeed * projectileSpeedMod,
-					Config.GetStat(WeaponStatType.DamagePerHit, weaponLevel));
+					projectileMaxOffset,
+					emitterSpeed + Config.GetStat(WeaponStatType.ProjectileForwardSpeed, weaponLevel) * projectileSpeedMod,
+					Config.GetStat(WeaponStatType.DamagePerHit, weaponLevel),
+					Config.GetStat(WeaponStatType.Range, weaponLevel),
+					Config.GetStat(WeaponStatType.AreaOfEffectRadius, weaponLevel),
+					Strategy.ProjectileMovementPattern == ProjectileMovementPattern.Parabolic);
 			}
 
 			CurrentCooldown = Config.GetStat(WeaponStatType.FireRate, weaponLevel);

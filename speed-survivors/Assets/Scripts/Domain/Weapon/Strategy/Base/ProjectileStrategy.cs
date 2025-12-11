@@ -5,6 +5,8 @@ namespace Domain.Weapon.Strategy.Base
 {
 	public abstract class ProjectileStrategy : IWeaponStrategy
 	{
+		public virtual ProjectileMovementPattern ProjectileMovementPattern => ProjectileMovementPattern.Linear;
+
 		/// <summary>
 		/// Base implementation returns 1f
 		/// </summary>
@@ -25,6 +27,14 @@ namespace Domain.Weapon.Strategy.Base
 		/// Base implementation returns Vector3.one
 		/// </summary>
 		public virtual Vector3 GetPositionModifier(int projectileIndex, int totalProjectiles)
+		{
+			return Vector3.zero;
+		}
+
+		/// <summary>
+		/// Base implementation returns Vector3.zero
+		/// </summary>
+		public virtual Vector3 GetMaxOffsetPosition(int projectileIndex, int totalProjectiles)
 		{
 			return Vector3.zero;
 		}

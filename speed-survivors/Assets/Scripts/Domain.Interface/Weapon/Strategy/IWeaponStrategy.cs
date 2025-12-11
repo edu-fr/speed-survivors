@@ -4,10 +4,9 @@ namespace Domain.Interface.Weapon.Strategy
 {
 	public interface IWeaponStrategy
 	{
+		ProjectileMovementPattern ProjectileMovementPattern { get; }
 		/// <summary>
-		/// Returns a modifier to be mu
-		///
-		///
+		/// Returns a modifier for the projectile speed based on its index and the total number of projectiles.
 		/// Default: 1f
 		/// </summary>
 		float GetSpeedModifier(int projectileIndex, int totalProjectiles);
@@ -23,5 +22,10 @@ namespace Domain.Interface.Weapon.Strategy
 		/// Default: Vector3.zero
 		/// </summary>
 		Vector3 GetPositionModifier(int projectileIndex, int totalProjectiles);
+
+		/// <summary>
+		/// Returns a maximum offset position for the projectile. Used for launch weapons or different movement types
+		/// </summary>
+		Vector3 GetMaxOffsetPosition(int projectileIndex, int totalProjectiles);
 	}
 }

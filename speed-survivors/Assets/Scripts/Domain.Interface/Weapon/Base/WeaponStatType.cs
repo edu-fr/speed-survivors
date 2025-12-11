@@ -7,6 +7,7 @@ namespace Domain.Interface.Weapon.Base
 		Range,
 		FireRate,
 		ProjectileForwardSpeed,
-		ProjectileLateralSpeed
+		ProjectileLateralSpeed,
+		AreaOfEffectRadius
 	}
 }
