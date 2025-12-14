@@ -28,14 +28,16 @@ namespace Controller.Weapon.Ammo
 			Vector3 pos,
 			Vector3 dir,
 			Vector3 maxOffset,
-			float speed,
+			float projectileSpeed,
+			float emitterSpeed,
 			float damage,
-			float lifetime,
+			float limitDistanceTraveled,
 			float areaOfEffectRadius,
-			bool parabolicMovement)
+			bool parabolicMovement,
+			float spawnDelay)
 		{
 			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir));
-			projectile.Init(prefab, damage, speed, lifetime, dir, maxOffset, areaOfEffectRadius, parabolicMovement);
+			projectile.Init(prefab, damage, projectileSpeed, emitterSpeed, limitDistanceTraveled, dir, maxOffset, areaOfEffectRadius, parabolicMovement, spawnDelay);
 			ActiveProjectiles.Add(projectile);
 		}
 

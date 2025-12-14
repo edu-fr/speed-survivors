@@ -27,5 +27,10 @@ namespace Domain.Interface.Weapon.Strategy
 		/// Returns a maximum offset position for the projectile. Used for launch weapons or different movement types
 		/// </summary>
 		Vector3 GetMaxOffsetPosition(int projectileIndex, int totalProjectiles);
+
+		/// <summary>
+		/// Returns a delay between projectile spawns based on its index and the total number of projectiles.
+		/// </summary>
+		float GetSpawnDelay(int projectileIndex, int totalProjectiles);
 	}
 }

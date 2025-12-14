@@ -26,5 +26,10 @@ namespace Domain.Weapon.Strategy.Base
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public float GetSpawnDelay(int projectileIndex, int totalProjectiles)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

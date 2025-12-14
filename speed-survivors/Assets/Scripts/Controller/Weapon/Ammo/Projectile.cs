@@ -1,3 +1,4 @@
+using System;
 using Controller.General;
 using Controller.Interface;
 using UnityEngine;
@@ -16,94 +17,126 @@ namespace Controller.Weapon.Ammo
 		private GameObject HitVfx { get; set; }
 
 		public Projectile Prefab { get; private set; }
-		private float CurrentTimer { get; set; }
-		private float TotalLifetime { get; set; }
+		private float CurrentDistanceTraveled { get; set; }
+		private float LimitDistanceTraveled { get; set; }
 		private Vector3 StartPosition { get; set; }
-		private float Speed { get; set; }
+		private float ProjectileSpeed { get; set; }
+		private float EmitterSpeed { get; set; }
 		private float Damage { get; set; }
 		private Vector3 Direction { get; set; }
-		public Vector3 MaxPositionOffset { get; set; }
+		private Vector3 MaxPositionOffset { get; set; }
 		private bool ParabolicMovement { get; set; }
 		private float AreaOfEffectRadius { get; set; }
+		private float CachedMeshBoundsRadius { get; set; } = -1f;
+		private float SpawnTimer { get; set; }
+		private float ElapsedTime { get; set; }
 
 		private static readonly RaycastHit[] RaycastResults = new RaycastHit[1];
-		private static readonly Collider[] AreaOfEffectResults = new Collider[100]; // Buffer para explosão
+		private static readonly Collider[] AreaOfEffectResults = new Collider[100];
 
-		// TODO: Alterar para que o lifetime da bala seja distancia percorrida, e nao tempo
 		public void Init(Projectile prefab,
 			float damage,
-			float speed,
-			float lifetime,
+			float projectileSpeed,
+			float emitterSpeed,
+			float limitDistanceTraveled,
 			Vector3 direction,
 			Vector3 maxOffset,
 			float areaOfEffect,
-			bool parabolicMovement)
+			bool parabolicMovement,
+			float spawnDelay)
 		{
 			EnsureStillNotInit();
 
 			Prefab = prefab;
-			CurrentTimer = lifetime;
-			TotalLifetime = lifetime;
+			CurrentDistanceTraveled = 0f;
+			LimitDistanceTraveled = Mathf.Max(0.0001f, limitDistanceTraveled);
 			StartPosition = transform.position;
-			Direction = direction;
-			Speed = speed;
+			Direction = direction.normalized;
+			ProjectileSpeed = projectileSpeed;
+			EmitterSpeed = emitterSpeed;
 			Damage = damage;
 			AreaOfEffectRadius = areaOfEffect;
 			ParabolicMovement = parabolicMovement;
 			MaxPositionOffset = maxOffset;
+			ElapsedTime = 0f;
+
+			if (CachedMeshBoundsRadius <= 0f)
+			{
+				var extents = MeshRenderer.bounds.extents;
+				CachedMeshBoundsRadius = Mathf.Max(extents.x, Mathf.Max(extents.y, extents.z));
+			}
+
+			SpawnTimer = spawnDelay;
+			gameObject.SetActive(false);
 
 			Initialized = true;
 		}
-
 
 		public bool Tick(float deltaTime)
 		{
 			CheckInit();
 
-			CurrentTimer -= deltaTime;
-
-			if (CurrentTimer <= 0f)
+			if (SpawnTimer > 0f)
 			{
-				if (AreaOfEffectRadius > 0)
-					ApplyAreaOfEffect();
+				SpawnTimer -= deltaTime;
 
-				return false;
+				if (SpawnTimer > 0f)
+					return true;
+
+				gameObject.SetActive(true);
 			}
 
+			ElapsedTime += deltaTime;
+
 			var previousPosition = transform.position;
-			var stepDistance = Speed * deltaTime;
-			var nextLinearPos = previousPosition + Direction * stepDistance;
+			var projectileStep = ProjectileSpeed * deltaTime;
+			var emitterStep = EmitterSpeed * deltaTime;
+			var totalBodyStep = projectileStep + emitterStep;
+
+			var totalProjectileDistance = ElapsedTime * ProjectileSpeed;
+			var totalEmitterContribution = ElapsedTime * EmitterSpeed;
+
+			var movementAlongDirection = totalProjectileDistance + totalEmitterContribution;
+			var clampedProgress = Mathf.Clamp01(totalProjectileDistance / LimitDistanceTraveled);
+
+			if (ParabolicMovement)
+			{
+				var basePosition = StartPosition + Direction * movementAlongDirection;
+				var heightOffset = Mathf.Sin(clampedProgress * Mathf.PI) * MaxPositionOffset.y;
+				basePosition.y = StartPosition.y + heightOffset + Direction.y * movementAlongDirection;
+				transform.position = basePosition;
+			}
+			else
+			{
+				var nextLinearPos = previousPosition + Direction * totalBodyStep;
+				transform.position = nextLinearPos;
+			}
+
 			var hits = Physics.SphereCastNonAlloc(
 				previousPosition,
-				MeshRenderer.bounds.extents.x,
+				CachedMeshBoundsRadius,
 				Direction,
 				RaycastResults,
-				stepDistance,
+				totalBodyStep,
 				DamageableHurtBoxLayer.value
 			);
-
-			// ShowDebugRaycastHit(hits, previousPosition, nextLinearPos);
 
 			if (hits > 0)
 			{
 				var hitInfo = RaycastResults[0];
 				if (HandleHit(hitInfo.collider))
+				{
 					return false;
+				}
 			}
 
-			if (ParabolicMovement)
+			CurrentDistanceTraveled = totalProjectileDistance;
+			if (CurrentDistanceTraveled >= LimitDistanceTraveled)
 			{
-				transform.position += Direction * stepDistance;
-				var progress = 1f - CurrentTimer / TotalLifetime;
-				// Calculate the height based on progress (Sin)
-				var heightOffset = Mathf.Sin(progress * Mathf.PI) * MaxPositionOffset.y;
-				var currentPos = transform.position;
-				currentPos.y = StartPosition.y + heightOffset + (Direction.y * stepDistance);
-				transform.position = currentPos;
-			}
-			else // Linear y movement
-			{
-				transform.position = nextLinearPos;
+				if (AreaOfEffectRadius > 0f)
+					ApplyAreaOfEffect();
+
+				return false;
 			}
 
 			return true;
@@ -111,14 +144,16 @@ namespace Controller.Weapon.Ammo
 
 		private bool HandleHit(Collider hitCollider)
 		{
-			if (AreaOfEffectRadius > 0)
+			if (AreaOfEffectRadius > 0f)
 			{
 				ApplyAreaOfEffect();
-				return true; // Destroy projectile after explosion
+				return true;
 			}
 
-			var gotRelay = hitCollider.TryGetComponent<EnemyHitboxRelay>(out var relay);
-			if (!gotRelay)
+			if (!hitCollider.TryGetComponent<EnemyHitboxRelay>(out var relay))
+				return false;
+
+			if (relay == null || relay.EnemyController == null)
 				return false;
 
 			return relay.EnemyController.TakeHit(Damage);
@@ -127,19 +162,19 @@ namespace Controller.Weapon.Ammo
 		private void ApplyAreaOfEffect()
 		{
 			if (HitVfx != null)
-			{
-				// Placeholder
-				Instantiate(HitVfx, transform.position, Quaternion.identity);
-			}
+				Instantiate(HitVfx, transform.position, Quaternion.identity); // TODO: Use pool
 
 			var count = Physics.OverlapSphereNonAlloc(transform.position,
 				AreaOfEffectRadius,
 				AreaOfEffectResults,
-				DamageableHurtBoxLayer);
+				DamageableHurtBoxLayer.value
+			);
 
 			for (var i = 0; i < count; i++)
 			{
-				AreaOfEffectResults[i].TryGetComponent<EnemyHitboxRelay>(out var relay);
+				if (!AreaOfEffectResults[i].TryGetComponent<EnemyHitboxRelay>(out var relay))
+					continue;
+
 				relay.EnemyController.TakeHit(Damage);
 			}
 		}

@@ -38,5 +38,13 @@ namespace Domain.Weapon.Strategy.Base
 		{
 			return Vector3.zero;
 		}
+
+		/// <summary>
+		/// Base implementation returns 0f
+		/// </summary>
+		public virtual float GetSpawnDelay(int projectileIndex, int totalProjectiles)
+		{
+			return 0f;
+		}
 	}
 }
