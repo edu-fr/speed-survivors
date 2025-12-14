@@ -1,6 +1,8 @@
 using System;
 using Controller.General;
 using Controller.Interface;
+using Controller.UI;
+using Controller.UI.Enemy;
 using Domain.Enemy;
 using Domain.Interface.Enemy;
 using Domain.Interface.Loot;
@@ -88,6 +90,7 @@ namespace Controller.Enemy
 
 			View.PlayHitFeedback();
 			Enemy.TakeDamage(damage);
+			DamageNumbersManager.Instance.SpawnDamagePopup(transform.position, (int) damage, false);
 			_stoppedByGettingHit = true;
 			_currentMovementRecoverTime = DefaultMovementRecoverTime;
 

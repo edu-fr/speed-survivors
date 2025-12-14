@@ -25,13 +25,13 @@ namespace Controller.General
 			}
 		}
 
-		public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Component, ISpawnable
+		public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform customParent = null) where T : Component, ISpawnable
 		{
 			var key = prefab.GetInstanceID();
 
 			if (!Pools.ContainsKey(key))
 			{
-				CreatePool(key, prefab);
+				CreatePool(key, prefab, customParent);
 			}
 
 			var instance = ((ObjectPool<T>) Pools[key]).Get();
@@ -57,17 +57,26 @@ namespace Controller.General
 			}
 		}
 
-		private void CreatePool<T>(int key, T prefab) where T : Component
+		private void CreatePool<T>(int key, T prefab, Transform customParent = null) where T : Component
 		{
-			var holderName = $"{prefab.name}_PoolHolder";
-			var holderGameObject = new GameObject(holderName);
-			holderGameObject.transform.SetParent(transform);
-			holderGameObject.transform.localPosition = Vector3.zero;
+			Transform holder;
+			if (customParent == null)
+			{
+				var holderName = $"{prefab.name}_PoolHolder";
+				var holderGameObject = new GameObject(holderName);
+				holderGameObject.transform.SetParent(transform);
+				holderGameObject.transform.localPosition = Vector3.zero;
+				holder = holderGameObject.transform;
+			}
+			else
+			{
+				holder = customParent;
+			}
 
 			var pool = new ObjectPool<T>(
 				createFunc: () =>
 				{
-					var obj = Instantiate(prefab, holderGameObject.transform);
+					var obj = Instantiate(prefab, holder);
 					obj.gameObject.SetActive(false);
 					return obj;
 				},
@@ -75,7 +84,7 @@ namespace Controller.General
 				actionOnRelease: component =>
 				{
 					component.gameObject.SetActive(false);
-					component.transform.SetParent(holderGameObject.transform);
+					component.transform.SetParent(holder);
 				},
 				defaultCapacity: DefaultPoolCapacity,
 				maxSize: DefaultPoolMaxSize
@@ -83,5 +92,7 @@ namespace Controller.General
 
 			Pools.Add(key, pool);
 		}
+
+
 	}
 }
