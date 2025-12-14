@@ -18,9 +18,9 @@ namespace Controller.Drop
 		private const float MagnetSpeed = 5f;
 
 		[Header("Drop Movement Config")]
-		private const float DropArcHeight = 1.5f;
+		private const float DropArcHeight = 1.2f;
 
-		private const float PopDuration = 1.3f;
+		private const float PopDuration = 1f;
 		private readonly Range<float> _dropScatterRadius = new(1.3f, 1.9f);
 
 		[Header("Drop Movement Config")]

@@ -90,7 +90,8 @@ namespace Controller.Enemy
 
 			View.PlayHitFeedback();
 			Enemy.TakeDamage(damage);
-			DamageNumbersManager.Instance.SpawnDamagePopup(transform.position, (int) damage, false);
+			var positionWithOffset = transform.position + new Vector3(0f, GetHeight() * 0.5f, 0f);
+			DamageNumbersManager.Instance.SpawnDamagePopup(positionWithOffset, (int) damage, false);
 			_stoppedByGettingHit = true;
 			_currentMovementRecoverTime = DefaultMovementRecoverTime;
 

@@ -1,3 +1,4 @@
+using System;
 using Controller.General;
 using Controller.Interface;
 using UnityEngine;
@@ -5,8 +6,16 @@ using View.UI.Enemy;
 
 namespace Controller.UI.Enemy
 {
+	public enum DamageNumberStyle
+	{
+		Linear,
+		Parabolic
+	}
+
 	public class DamageNumberController : InitializableMono, ISpawnable
 	{
+		private const float Gravity = 5f;
+
 		[field: SerializeField]
 		private DamageNumberView View { get; set; }
 
@@ -15,8 +24,15 @@ namespace Controller.UI.Enemy
 		private Vector3 _velocity;
 		private Vector3 _currentPos;
 		private float _scaleDuration;
+		private DamageNumberStyle _currentStyle;
 
-		public void Init(Vector3 startPos, int amount, bool isCritical, float lifetime, float scaleDuration, Vector3 initialVelocity)
+		public void Init(Vector3 startPos,
+			int amount,
+			bool isCritical,
+			float lifetime,
+			float scaleDuration,
+			Vector3 initialVelocity,
+			DamageNumberStyle style)
 		{
 			EnsureStillNotInit();
 
@@ -24,6 +40,7 @@ namespace Controller.UI.Enemy
 			_maxLifetime = lifetime;
 			_scaleDuration = scaleDuration;
 			_velocity = initialVelocity;
+			_currentStyle = style;
 			_timer = 0f;
 
 			View.SetupVisuals(amount, isCritical);
@@ -35,11 +52,13 @@ namespace Controller.UI.Enemy
 		public bool Tick(float dt)
 		{
 			_timer += dt;
+			if (_currentStyle == DamageNumberStyle.Parabolic)
+			{
+				_velocity.y -= Gravity * dt;
+			}
 
-			// Simple euler for position
 			_currentPos += _velocity * dt;
 
-			// Punch
 			Vector3 currentScale;
 			if (_timer < _scaleDuration)
 			{
@@ -53,13 +72,30 @@ namespace Controller.UI.Enemy
 
 			View.UpdateTransform(_currentPos, currentScale);
 
-			// Start fade out on 70% of lifetime
-			if (_timer > _maxLifetime * 0.7f)
+			var shouldStartFade = false;
+			switch (_currentStyle)
 			{
-				float fadeDuration = _maxLifetime * 0.3f;
-				float timeInFade = _timer - (_maxLifetime * 0.7f);
-				float alpha = 1f - (timeInFade / fadeDuration);
+				case DamageNumberStyle.Linear:
+				{
+					if (_timer > _maxLifetime * 0.7f)
+						shouldStartFade = true;
+					break;
+				}
+				case DamageNumberStyle.Parabolic:
+				{
+					if (_velocity.y < 0f || _timer > _maxLifetime * 0.7f)
+						shouldStartFade = true;
+					break;
+				}
+				default:
+					throw new ArgumentOutOfRangeException(_currentStyle.ToString(), "Invalid style for damage number");
+			}
 
+			if (shouldStartFade)
+			{
+				var fadeDuration = _maxLifetime * 0.3f;
+				var timeInFade = _timer - (_maxLifetime - fadeDuration);
+				var alpha = Mathf.Clamp01(1f - (timeInFade / fadeDuration));
 				View.UpdateAlpha(alpha);
 			}
 

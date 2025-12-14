@@ -40,7 +40,7 @@ namespace Controller.UI
 
 			var randomX = Random.Range(SpreadX.x, SpreadX.y);
 			var velocity = new Vector3(randomX, FloatSpeed, 0);
-			controller.Init(position, amount, isCritical, Lifetime, ScaleUpDuration, velocity);
+			controller.Init(position, amount, isCritical, Lifetime, ScaleUpDuration, velocity, DamageNumberStyle.Parabolic);
 
 			_activeControllers.Add(controller);
 		}
