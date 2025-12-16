@@ -37,7 +37,8 @@ namespace Controller.Weapon.Ammo
 			float spawnDelay)
 		{
 			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir));
-			projectile.Init(prefab, damage, projectileSpeed, emitterSpeed, limitDistanceTraveled, dir, maxOffset, areaOfEffectRadius, parabolicMovement, spawnDelay);
+			projectile.Init(prefab, damage, projectileSpeed, emitterSpeed, limitDistanceTraveled, dir, maxOffset,
+				areaOfEffectRadius, parabolicMovement, spawnDelay);
 			ActiveProjectiles.Add(projectile);
 		}
 

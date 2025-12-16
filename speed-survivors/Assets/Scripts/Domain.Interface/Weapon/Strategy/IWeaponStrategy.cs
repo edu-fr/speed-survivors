@@ -4,7 +4,6 @@ namespace Domain.Interface.Weapon.Strategy
 {
 	public interface IWeaponStrategy
 	{
-		ProjectileMovementPattern ProjectileMovementPattern { get; }
 		/// <summary>
 		/// Returns a modifier for the projectile speed based on its index and the total number of projectiles.
 		/// Default: 1f

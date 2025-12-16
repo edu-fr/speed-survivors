@@ -1,4 +1,3 @@
-using System;
 using Controller.General;
 using Controller.Interface;
 using UnityEngine;
@@ -151,9 +150,6 @@ namespace Controller.Weapon.Ammo
 			}
 
 			if (!hitCollider.TryGetComponent<EnemyHitboxRelay>(out var relay))
-				return false;
-
-			if (relay == null || relay.EnemyController == null)
 				return false;
 
 			return relay.EnemyController.TakeHit(Damage);

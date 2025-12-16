@@ -2,10 +2,11 @@ namespace Domain.Interface.Weapon.Base
 {
 	public enum WeaponStatType
 	{
+		Unknown,
 		DamagePerHit,
 		ProjectilesPerShot,
 		Range,
-		FireRate,
+		FireCooldown,
 		ProjectileForwardSpeed,
 		ProjectileLateralSpeed,
 		AreaOfEffectRadius

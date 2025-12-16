@@ -30,7 +30,7 @@ namespace Domain.Player
 		{
 			Stats = new PlayerStats();
 			CurrentHP = Stats.GetStat(StatType.Health);
-			Arsenal = new WeaponArsenal(new List<WeaponType>() { WeaponType.GrenadeLauncher });
+			Arsenal = new WeaponArsenal(new List<WeaponType>() { WeaponType.Flamethrower });
 			LevelProgression = new LevelProgression(growthConfig);
 		}
 

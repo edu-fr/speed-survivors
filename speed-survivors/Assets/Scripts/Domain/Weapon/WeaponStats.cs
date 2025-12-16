@@ -20,7 +20,7 @@ namespace Domain.Weapon
 				{ WeaponStatType.DamagePerHit, damagePerHit },
 				{ WeaponStatType.Range, range },
 				{ WeaponStatType.ProjectilesPerShot, projectilesPerShot },
-				{ WeaponStatType.FireRate, fireRate },
+				{ WeaponStatType.FireCooldown, fireRate },
 				{ WeaponStatType.ProjectileForwardSpeed, projectileForwardSpeed },
 				{ WeaponStatType.ProjectileLateralSpeed, projectileLateralSpeed }
 			};

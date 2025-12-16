@@ -5,6 +5,7 @@ namespace Domain.Interface.Weapon.Base
 		Unknown,
 		PeaShooter,
 		Shotgun,
-		GrenadeLauncher
+		GrenadeLauncher,
+		Flamethrower,
 	}
 }

@@ -3,7 +3,7 @@ using Domain.Weapon.Strategy.Base;
 using Engine;
 using UnityEngine;
 
-namespace Domain.Weapon.Strategy
+namespace Domain.Weapon.Strategy.ProjectileStrategies
 {
 	public class GranadeLauncherStrategy : ProjectileStrategy
 	{

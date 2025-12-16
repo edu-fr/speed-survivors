@@ -1,7 +1,7 @@
 using Domain.Weapon.Strategy.Base;
 using UnityEngine;
 
-namespace Domain.Weapon.Strategy
+namespace Domain.Weapon.Strategy.ProjectileStrategies
 {
 	public class ShotgunStrategy : ProjectileStrategy
 	{
