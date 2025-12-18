@@ -16,9 +16,6 @@ namespace Controller.UI
 		[field: SerializeField]
 		private DamageNumberController Prefab { get; set; }
 
-		[field: SerializeField]
-		private Transform WorldCanvasParent { get; set; }
-
 		private List<DamageNumberController> _activeControllers;
 
 		private void Awake()
@@ -36,7 +33,7 @@ namespace Controller.UI
 
 		public void SpawnDamagePopup(Vector3 position, int amount, bool isCritical)
 		{
-			var controller = PoolManager.Instance.Spawn(Prefab, position, Quaternion.identity, WorldCanvasParent);
+			var controller = PoolManager.Instance.Spawn(Prefab, position, Quaternion.identity);
 
 			var randomX = Random.Range(SpreadX.x, SpreadX.y);
 			var velocity = new Vector3(randomX, FloatSpeed, 0);

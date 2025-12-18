@@ -29,6 +29,7 @@ namespace Controller.Weapon.Ammo
 		private float CachedMeshBoundsRadius { get; set; } = -1f;
 		private float SpawnTimer { get; set; }
 		private float ElapsedTime { get; set; }
+		private bool IsCritical { get; set; }
 
 		private static readonly RaycastHit[] RaycastResults = new RaycastHit[1];
 		private static readonly Collider[] AreaOfEffectResults = new Collider[100];
@@ -42,7 +43,8 @@ namespace Controller.Weapon.Ammo
 			Vector3 maxOffset,
 			float areaOfEffect,
 			bool parabolicMovement,
-			float spawnDelay)
+			float spawnDelay,
+			bool isCritical)
 		{
 			EnsureStillNotInit();
 
@@ -58,6 +60,7 @@ namespace Controller.Weapon.Ammo
 			ParabolicMovement = parabolicMovement;
 			MaxPositionOffset = maxOffset;
 			ElapsedTime = 0f;
+			IsCritical = isCritical;
 
 			if (CachedMeshBoundsRadius <= 0f)
 			{
@@ -152,7 +155,7 @@ namespace Controller.Weapon.Ammo
 			if (!hitCollider.TryGetComponent<EnemyHitboxRelay>(out var relay))
 				return false;
 
-			return relay.EnemyController.TakeHit(Damage);
+			return relay.EnemyController.TakeHit(Damage, IsCritical);
 		}
 
 		private void ApplyAreaOfEffect()
@@ -171,7 +174,7 @@ namespace Controller.Weapon.Ammo
 				if (!AreaOfEffectResults[i].TryGetComponent<EnemyHitboxRelay>(out var relay))
 					continue;
 
-				relay.EnemyController.TakeHit(Damage);
+				relay.EnemyController.TakeHit(Damage, IsCritical);
 			}
 		}
 

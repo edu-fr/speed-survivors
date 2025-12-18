@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Controller.General;
 using Controller.Weapon;
 using Controller.Weapon.Ammo;
+using Domain.Interface.General;
 using Domain.Interface.Player;
 using Domain.Interface.Weapon.Base;
 using UnityEngine;
@@ -41,7 +42,12 @@ namespace Controller.Player
 			for (var i = 0; i < ActiveWeaponInstances.Count; i++)
 			{
 				var weaponLevel = PlayerDomainRef.Arsenal.GetWeaponLevel(ActiveWeaponInstances[i].Config.WeaponType);
-				ActiveWeaponInstances[i].Tick(deltaTime, shouldShoot, transformCurrentForwardVelocity, weaponLevel);
+				ActiveWeaponInstances[i]
+					.Tick(deltaTime,
+						shouldShoot,
+						transformCurrentForwardVelocity,
+						weaponLevel,
+						PlayerDomainRef.Stats.GetStat(StatType.CriticalChance));
 			}
 		}
 

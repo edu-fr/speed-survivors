@@ -6,7 +6,7 @@ namespace View.UI.Enemy
 	public class DamageNumberView : MonoBehaviour
 	{
 		[field: SerializeField]
-		private TextMeshProUGUI TextComponent { get; set; }
+		private TextMeshPro TextComponent { get; set; }
 
 		[field: SerializeField]
 		private float OriginalFontSize { get; set; }

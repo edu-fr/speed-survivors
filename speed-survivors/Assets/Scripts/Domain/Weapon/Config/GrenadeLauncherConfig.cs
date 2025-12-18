@@ -13,7 +13,7 @@ namespace Domain.Weapon.Config
 			[WeaponStatType.ProjectilesPerShot] =     new[] { 1f, 2f, 3f, 4f, 5f },
 			[WeaponStatType.FireCooldown] =           new[] { 2f, 2f, 1.8f, 1.8f, 1.5f },
 			[WeaponStatType.ProjectileForwardSpeed] = new[] { 10f, 15f, 20f, 25f, 30f },
-			[WeaponStatType.ProjectileLateralSpeed] = new[] { 0f, 0f, 0f, 0f, 0f },
+			[WeaponStatType.ProjectileLateralSpeed] = new[] { 0f },
 			[WeaponStatType.AreaOfEffectRadius] =     new[] { 3f, 3.5f, 4f, 4.5f, 5f },
 		};
 	}

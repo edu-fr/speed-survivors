@@ -5,6 +5,7 @@ namespace Domain.Weapon.Strategy.Base
 {
 	public class AuraStrategy : IWeaponStrategy
 	{
+		public const float DefaultDamageActivationCooldown = .1f;
 		public ProjectileMovementPattern ProjectileMovementPattern => ProjectileMovementPattern.Aura;
 
 		public float GetSpeedModifier(int projectileIndex, int totalProjectiles)

@@ -17,7 +17,7 @@ namespace Controller.Weapon
 			base.Init();
 		}
 
-		protected override void PerformAttack(float emitterSpeed, int weaponLevel)
+		protected override void PerformAttack(float emitterSpeed, int weaponLevel, bool isCritical)
 		{
 			var projectileCount = (int)Config.GetStat(WeaponStatType.ProjectilesPerShot, weaponLevel);
 
@@ -41,7 +41,8 @@ namespace Controller.Weapon
 					Config.GetStat(WeaponStatType.Range, weaponLevel),
 					Config.GetStat(WeaponStatType.AreaOfEffectRadius, weaponLevel),
 					ProjectileStrategy.ProjectileMovementPattern == ProjectileMovementPattern.Parabolic,
-					delay
+					delay,
+					isCritical
 				);
 			}
 		}

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Domain.Interface.Weapon.Base;
 using Domain.Interface.Weapon.Config;
+using UnityEngine;
 
 namespace Domain.Weapon.Config
 {
@@ -15,10 +16,7 @@ namespace Domain.Weapon.Config
 			if (statLevels == null)
 				throw new KeyNotFoundException($"Stat type {type} not found in weapon config {WeaponType}");
 
-			if (level < 0 || level >= statLevels.Length)
-				throw new KeyNotFoundException($"Level {level} is out of range for stat type {type} in weapon config {WeaponType}");
-
-			return statLevels[level];
+			return statLevels[Mathf.Clamp(level - 1, 0, statLevels.Length - 1)];
 		}
 	}
 }

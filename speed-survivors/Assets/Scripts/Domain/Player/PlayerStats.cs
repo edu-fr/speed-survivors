@@ -17,7 +17,9 @@ namespace Domain.Player
 				{ StatType.ForwardMoveSpeed, 05f },
 				{ StatType.LateralMoveSpeed, 10f },
 				{ StatType.Damage, 3f },
-				{ StatType.MagnetRange, 1.2f }
+				{ StatType.MagnetRange, 1.2f },
+				{ StatType.CriticalChance, 0.10f },
+				{ StatType.CriticalDamage, 1.5f }
 			};
 		}
 

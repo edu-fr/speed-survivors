@@ -1,6 +1,4 @@
 using Controller.General;
-using Controller.Interface;
-using Controller.UI;
 using Domain.Interface.Weapon.Base;
 using UnityEngine;
 
@@ -16,8 +14,16 @@ namespace Controller.Weapon
 		private float _range;
 		private float _angle;
 
-		protected override void PerformAttack(float emitterSpeed, int weaponLevel)
+		// Debug
+		[field: SerializeField]
+		private bool DebugDraw { get; set; }
+
+		private Color _debugDrawColor;
+
+		protected override void PerformAttack(float emitterSpeed, int weaponLevel, bool isCritical)
 		{
+			SetupDebugDrawColor();
+
 			_range = Config.GetStat(WeaponStatType.Range, weaponLevel);
 			_angle = Config.GetStat(WeaponStatType.AreaOfEffectRadius, weaponLevel);
 			var damage = Config.GetStat(WeaponStatType.DamagePerHit, weaponLevel);
@@ -34,8 +40,7 @@ namespace Controller.Weapon
 				if (!targetCollider.TryGetComponent<EnemyHitboxRelay>(out var relay))
 					return;
 
-				relay.EnemyController.TakeHit(damage);
-				DamageNumbersManager.Instance.SpawnDamagePopup(targetPosition, (int) damage, true);
+				relay.EnemyController.TakeHit(damage, isCritical);
 			}
 		}
 
@@ -50,20 +55,31 @@ namespace Controller.Weapon
 			return angleToTarget < angle / 2f;
 		}
 
-		private void OnDrawGizmosSelected()
+		private void OnDrawGizmos()
 		{
-			Gizmos.color = new Color(1, 0, 0, 0.3f);
+			if (!DebugDraw)
+				return;
+
+			Gizmos.color = _debugDrawColor;
 			Gizmos.DrawWireSphere(transform.position, _range);
 
 			if (_angle < 360)
 			{
 				Gizmos.color = Color.yellow;
-				Vector3 rightLimit = Quaternion.Euler(0, _angle / 2, 0) * transform.forward;
-				Vector3 leftLimit = Quaternion.Euler(0, -_angle / 2, 0) * transform.forward;
+				var rightLimit = Quaternion.Euler(0, _angle / 2, 0) * transform.forward;
+				var leftLimit = Quaternion.Euler(0, -_angle / 2, 0) * transform.forward;
 
 				Gizmos.DrawLine(transform.position, transform.position + rightLimit * _range);
 				Gizmos.DrawLine(transform.position, transform.position + leftLimit * _range);
 			}
 		}
+
+		private void SetupDebugDrawColor()
+		{
+			const float maxRange = 15f;
+			var t = Mathf.Clamp01(_range / maxRange);
+			_debugDrawColor = Color.Lerp(Color.darkRed, Color.softYellow, t);
+		}
+
 	}
 }

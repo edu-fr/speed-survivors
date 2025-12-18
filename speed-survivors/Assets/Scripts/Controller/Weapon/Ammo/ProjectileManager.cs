@@ -34,11 +34,11 @@ namespace Controller.Weapon.Ammo
 			float limitDistanceTraveled,
 			float areaOfEffectRadius,
 			bool parabolicMovement,
-			float spawnDelay)
+			float spawnDelay, bool isCritical)
 		{
 			var projectile = PoolManager.Instance.Spawn(prefab, pos, Quaternion.LookRotation(dir));
 			projectile.Init(prefab, damage, projectileSpeed, emitterSpeed, limitDistanceTraveled, dir, maxOffset,
-				areaOfEffectRadius, parabolicMovement, spawnDelay);
+				areaOfEffectRadius, parabolicMovement, spawnDelay, isCritical);
 			ActiveProjectiles.Add(projectile);
 		}
 

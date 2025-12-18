@@ -7,5 +7,6 @@ namespace Domain.Interface.Weapon.Base
 		Shotgun,
 		GrenadeLauncher,
 		Flamethrower,
+		IceWind
 	}
 }

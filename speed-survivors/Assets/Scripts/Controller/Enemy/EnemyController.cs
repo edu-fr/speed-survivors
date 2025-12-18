@@ -80,7 +80,7 @@ namespace Controller.Enemy
 			transform.position = position;
 		}
 
-		public bool TakeHit(float damage)
+		public bool TakeHit(float damage, bool isCritical)
 		{
 			CheckInit();
 
@@ -90,7 +90,7 @@ namespace Controller.Enemy
 			View.PlayHitFeedback();
 			Enemy.TakeDamage(damage);
 			var positionWithOffset = transform.position + new Vector3(0f, GetHeight() * 0.5f, 0f);
-			DamageNumbersManager.Instance.SpawnDamagePopup(positionWithOffset, (int) damage, false);
+			DamageNumbersManager.Instance.SpawnDamagePopup(positionWithOffset, (int) damage, isCritical);
 			_stoppedByGettingHit = true;
 			_currentMovementRecoverTime = DefaultMovementRecoverTime;
 
