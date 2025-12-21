@@ -7,11 +7,14 @@ namespace Controller.CustomCamera
 	[Serializable]
 	public class FollowingCameraHandler : Initializable
 	{
+		private const float SmoothTime = 0.2f;
+
 		[field: SerializeField]
 		private Transform Transform { get; set; }
 
-		private const float SmoothTime = 0.2f;
+		[field: SerializeField]
 		private Vector3 Offset { get; set; }
+
 		private Transform Target { get; set; }
 		private Vector3 _currentVelocity;
 
@@ -20,7 +23,6 @@ namespace Controller.CustomCamera
 			EnsureStillNotInitialized();
 
 			Target = target;
-			Offset = Transform.position - target.position;
 
 			Initialized = true;
 		}

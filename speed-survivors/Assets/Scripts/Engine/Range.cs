@@ -7,10 +7,10 @@ namespace Engine
 	public struct Range<T> where T : struct
 	{
 		[field: SerializeField]
-		public T Start { get; private set; }
+		public T Start { get; set; }
 
 		[field: SerializeField]
-		public T End { get; private set; }
+		public T End { get; set; }
 
 		public Range(T start, T end)
 		{

@@ -13,23 +13,23 @@ MonoBehaviour:
   m_Name: PlayerLevelGrowthConfig
   m_EditorClassIdentifier: Data::Data.ScriptableObjects.Generator.GrowthConfigGeneratorSO
   <GrowthType>k__BackingField: 2
-  <BaseValue>k__BackingField: 30
+  <BaseValue>k__BackingField: 3000
   <GrowthFactor>k__BackingField: 1
   <PolynomialPower>k__BackingField: 2
   <PreviewGoalCount>k__BackingField: 15
   <EditorPreviewList>k__BackingField:
-  - 'Goal 1 -> 2: 60 Value (Delta: 30)'
-  - 'Goal 2 -> 3: 135 Value (Delta: 75)'
-  - 'Goal 3 -> 4: 240 Value (Delta: 105)'
-  - 'Goal 4 -> 5: 375 Value (Delta: 135)'
-  - 'Goal 5 -> 6: 540 Value (Delta: 165)'
-  - 'Goal 6 -> 7: 735 Value (Delta: 195)'
-  - 'Goal 7 -> 8: 960 Value (Delta: 225)'
-  - 'Goal 8 -> 9: 1215 Value (Delta: 255)'
-  - 'Goal 9 -> 10: 1500 Value (Delta: 285)'
-  - 'Goal 10 -> 11: 1815 Value (Delta: 315)'
-  - 'Goal 11 -> 12: 2160 Value (Delta: 345)'
-  - 'Goal 12 -> 13: 2535 Value (Delta: 375)'
-  - 'Goal 13 -> 14: 2940 Value (Delta: 405)'
-  - 'Goal 14 -> 15: 3375 Value (Delta: 435)'
-  - 'Goal 15 -> 16: 3840 Value (Delta: 465)'
+  - 'Goal 1 -> 2: 6000 Value (Delta: 6000)'
+  - 'Goal 2 -> 3: 13500 Value (Delta: 7500)'
+  - 'Goal 3 -> 4: 24000 Value (Delta: 10500)'
+  - 'Goal 4 -> 5: 37500 Value (Delta: 13500)'
+  - 'Goal 5 -> 6: 54000 Value (Delta: 16500)'
+  - 'Goal 6 -> 7: 73500 Value (Delta: 19500)'
+  - 'Goal 7 -> 8: 96000 Value (Delta: 22500)'
+  - 'Goal 8 -> 9: 121500 Value (Delta: 25500)'
+  - 'Goal 9 -> 10: 150000 Value (Delta: 28500)'
+  - 'Goal 10 -> 11: 181500 Value (Delta: 31500)'
+  - 'Goal 11 -> 12: 216000 Value (Delta: 34500)'
+  - 'Goal 12 -> 13: 253500 Value (Delta: 37500)'
+  - 'Goal 13 -> 14: 294000 Value (Delta: 40500)'
+  - 'Goal 14 -> 15: 337500 Value (Delta: 43500)'
+  - 'Goal 15 -> 16: 384000 Value (Delta: 46500)'

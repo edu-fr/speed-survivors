@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Controller.Interface;
 using UnityEngine;
 
@@ -8,8 +9,12 @@ namespace Controller.World
 		[Header("References")]
 		[field: SerializeField]
 		private Transform GroundObject { get; set; }
+
+		[field: SerializeField]
+		private List<MeshFilter> WalkableMeshes { get; set; }
+
 		public Vector3 SectionTransformSize { get; set; }
-		private MeshFilter ActiveMeshFilter { get; set; }
+		private Vector3 SectionCenter { get; set; }
 
 		private void Awake()
 		{
@@ -23,23 +28,25 @@ namespace Controller.World
 
 		private void CalculateSize()
 		{
-			if (ActiveMeshFilter == null)
-				ActiveMeshFilter = GroundObject.GetComponent<MeshFilter>();
-
-			if (ActiveMeshFilter == null || ActiveMeshFilter.sharedMesh == null)
+			if (WalkableMeshes == null || WalkableMeshes.Count == 0) return;
+			var combinedBounds = new Bounds(WalkableMeshes[0].transform.position, Vector3.zero);
+			foreach (var meshFilter in WalkableMeshes)
 			{
-				Debug.LogWarning($"WorldSection: No mesh found on {GroundObject.name}", this);
-				return;
+				if (meshFilter != null && meshFilter.TryGetComponent<Renderer>(out var rendererComp))
+				{
+					combinedBounds.Encapsulate(rendererComp.bounds);
+				}
 			}
 
-			var rawMeshSizeX = ActiveMeshFilter.sharedMesh.bounds.size.x;
-			var rawMeshSizeY = ActiveMeshFilter.sharedMesh.bounds.size.y;
-			var rawMeshSizeZ = ActiveMeshFilter.sharedMesh.bounds.size.z;
-			var sizeX = rawMeshSizeX * GroundObject.localScale.x * transform.localScale.x;
-			var sizeY = rawMeshSizeY * GroundObject.localScale.y * transform.localScale.y;
-			var sizeZ = rawMeshSizeZ * GroundObject.localScale.z * transform.localScale.z;
+			SectionTransformSize = combinedBounds.size;
+			SectionCenter = combinedBounds.center;
+		}
 
-			SectionTransformSize = new Vector3(sizeX, sizeY, sizeZ);
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.green;
+			// Usamos SectionCenter em vez de transform.position
+			Gizmos.DrawWireCube(SectionCenter, SectionTransformSize);
 		}
 
 		public void OnDespawn()
