@@ -100,6 +100,11 @@ namespace Controller.Enemy
 			return true;
 		}
 
+		public IEnemy GetEnemyDomainRef()
+		{
+			return Enemy;
+		}
+
 		public void SubscribeToDeathEvent(Action<EnemyController> callback)
 		{
 			CheckInit();

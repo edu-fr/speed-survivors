@@ -7,11 +7,11 @@ using Random = UnityEngine.Random;
 namespace Controller.World
 {
 	[Serializable]
-	public class WorldBuildHandler
+	public class WorldBuildHandler : Initializable
 	{
-		private const int InitialSegments = 3;
-		private const float DistanceToOldestSegmentNecessaryToDespawnIt = 10f;
-		private const float DistanceToSpawnNewSegment = 150f;
+		private const int InitialSegments = 5;
+		private const float DistanceToOldestSegmentNecessaryToDespawnIt = 75f;
+		private const float DistanceToSpawnNewSegment = 200f;
 
 		[field: SerializeField]
 		private WorldSection[] SectionPrefabs { get; set; }
@@ -22,10 +22,10 @@ namespace Controller.World
 
 		private float _currentConnectionZ;
 
-		private bool Initialized { get; set; }
-
 		public void Init(Transform playerControllerRef)
 		{
+			EnsureStillNotInitialized();
+
 			PlayerTransform = playerControllerRef;
 
 			Initialized = true;
@@ -88,12 +88,6 @@ namespace Controller.World
 		{
 			var section = ActiveSections.Dequeue();
 			PoolManager.Instance.Despawn(section.prefab, section.instance); // Devolve pro Pool
-		}
-
-		private void CheckInit()
-		{
-			if (!Initialized)
-				throw new InvalidOperationException("WorldManager not initialized. Call Init() before using it.");
 		}
 	}
 }

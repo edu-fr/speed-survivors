@@ -1,12 +1,15 @@
 using System;
+using System.Collections;
 using Controller.CustomCamera;
 using Controller.Drop;
 using Controller.Enemy;
+using Controller.General;
 using Controller.Player;
 using Controller.UI;
 using Controller.Weapon.Ammo;
 using Controller.World;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Controller.SceneController
 {
@@ -75,6 +78,7 @@ namespace Controller.SceneController
 			ProjectileHandler = new ProjectileHandler();
 			PlayerController = Instantiate(PlayerPrefab);
 			PlayerController.Init(MainCamera, StartingPoint.position, WorldBuildHandler.DefaultSegmentTransformSize.x / 2f, ProjectileHandler);
+			PlayerController.SubscribeToPlayerDeath(OnPlayerDeath);
 			PlayerUpgradeHandler = new PlayerUpgradeHandler(PlayerController.GetPlayerDomainRef());
 			UIHandler.Init(PlayerController, PlayerUpgradeHandler);
 			DropHandler.Init(PlayerController);
@@ -82,6 +86,7 @@ namespace Controller.SceneController
 			var playerTransform = PlayerController.transform;
 			FollowingCameraHandler.Init(playerTransform);
 			EnemiesHandler.Init(playerTransform, DropHandler);
+			EnemiesHandler.OnEnemyDespawnedAlive += PlayerController.TakeHit;
 			WorldBuildHandler.Init(playerTransform);
 			WorldBuildHandler.SpawnInitialWorldSections();
 		}
@@ -95,5 +100,26 @@ namespace Controller.SceneController
 			GameplayStarted = true;
 		}
 
+		private void OnPlayerDeath()
+		{
+			StartCoroutine(DeathCoroutine());
+		}
+
+		private IEnumerator DeathCoroutine()
+		{
+			GameManager.Instance.SlowTime(nameof(GameplaySceneController) + ".OnPlayerDeath");
+			yield return new WaitForSecondsRealtime(1f);
+			UIHandler.ShowTryAgainModal();
+			yield return new WaitForSecondsRealtime(1.5f);
+			UIHandler.HideTryAgainModal();
+			GameManager.Instance.ResumeTime(nameof(GameplaySceneController) + ".OnPlayerDeath");
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+
+		private void OnDestroy()
+		{
+			EnemiesHandler.OnEnemyDespawnedAlive -= PlayerController.TakeHit;
+			PlayerController.UnsubscribeFromPlayerDeath(OnPlayerDeath);
+		}
 	}
 }

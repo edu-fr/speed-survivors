@@ -8,5 +8,6 @@ namespace Domain.Interface.General
 		void SetStat(T statType, float value);
 		void IncreaseStat(T statType, float value);
 		void DecreaseStat(T statType, float value);
+		event Action<T, float, float> OnStatChanged;
 	}
 }

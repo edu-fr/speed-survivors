@@ -13,7 +13,7 @@ namespace Domain.Player
 			// Placeholder initial stats
 			StatDict = new Dictionary<StatType, float>
 			{
-				{ StatType.Health, 100f },
+				{ StatType.MaxHealth, 100f },
 				{ StatType.ForwardMoveSpeed, 05f },
 				{ StatType.LateralMoveSpeed, 10f },
 				{ StatType.Damage, 3f },

@@ -24,7 +24,7 @@ namespace Domain.Upgrade
 
 			[UpgradeType.PlayerStats] = new()
 			{
-				new PlayerStatUpgrade(StatType.Health, 20f),
+				new PlayerStatUpgrade(StatType.MaxHealth, 20f),
 				new PlayerStatUpgrade(StatType.ForwardMoveSpeed, 10f),
 				new PlayerStatUpgrade(StatType.LateralMoveSpeed, 5f),
 				new PlayerStatUpgrade(StatType.Damage, 1f),

@@ -11,6 +11,7 @@ namespace Controller.Enemy
 	public class EnemiesHandler : Initializable
 	{
 		private const float SpawnCooldown = 0.3f;
+		private const float DespawnRange = 1f;
 
 		[field: SerializeField]
 		private EnemyController EnemyPrefab { get; set; }
@@ -29,6 +30,8 @@ namespace Controller.Enemy
 		private const float SmoothTime = 0.2f;
 		private bool SpawnerShouldAccompanyTargetZ { get; set; }
 		private DropHandler SceneDropHandler { get; set; }
+		public delegate bool EnemyDespawnedAlive(float damage, bool critical);
+		public event EnemyDespawnedAlive OnEnemyDespawnedAlive;
 
 		public void Init(Transform transformToFollow, DropHandler sceneDropHandler)
 		{
@@ -86,9 +89,18 @@ namespace Controller.Enemy
 		{
 			for (var i = ActiveEnemies.Count - 1; i >= 0; i--)
 			{
-				if (!ActiveEnemies[i].Tick(dt))
+				var enemy = ActiveEnemies[i];
+				if (!enemy.Tick(dt))
 				{
-					DespawnEnemy(ActiveEnemies[i], i);
+					DespawnEnemy(enemy, i, true);
+					return;
+				}
+
+				if (IsInDespawnRange(enemy.transform.position.z))
+				{
+					OnEnemyDespawnedAlive?.Invoke(enemy.GetEnemyDomainRef().Damage, true);
+					DespawnEnemy(enemy, i, false);
+					return;
 				}
 			}
 		}
@@ -115,16 +127,19 @@ namespace Controller.Enemy
 			enemy.SetPosition(spawnPosition + new Vector3(0, enemy.GetHeight() / 2f, 0));
 		}
 
-		private void DespawnEnemy(EnemyController enemyController, int index)
+		private bool IsInDespawnRange(float enemyZ)
+		{
+			return TransformToFollow.position.z - enemyZ > DespawnRange;
+		}
+
+		private void DespawnEnemy(EnemyController enemyController, int index, bool dropLoot)
 		{
 			var lastIndex = ActiveEnemies.Count - 1;
 			ActiveEnemies[index] = ActiveEnemies[lastIndex];
 			ActiveEnemies.RemoveAt(lastIndex);
 
-			SceneDropHandler.SpawnLootCluster(
-				enemyController.transform.position,
-				enemyController.GetLoot()
-				);
+			if (dropLoot)
+				SceneDropHandler.SpawnLootCluster(enemyController.transform.position, enemyController.GetLoot());
 
 			// Dying animation?
 			PoolManager.Instance.Despawn(EnemyPrefab, enemyController);

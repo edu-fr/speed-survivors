@@ -10,9 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4407030525837094218}
   - component: {fileID: 1000655718427347625}
+  - component: {fileID: 5053099867160823494}
   - component: {fileID: 384644390399106325}
   - component: {fileID: 7763047207587605394}
   - component: {fileID: 4611462308341889814}
+  - component: {fileID: 959697203013246540}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -56,6 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf206b46bc3595e4cadb5a26092089c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Controller::PlayerController
+  <View>k__BackingField: {fileID: 5053099867160823494}
   <Collider>k__BackingField: {fileID: 4611462308341889814}
   <WeaponArsenalHandler>k__BackingField:
     <WeaponInstances>k__BackingField:
@@ -65,6 +68,19 @@ MonoBehaviour:
     - {fileID: 3702761166067497112}
     - {fileID: 5505438060213134822}
   <LevelProgressionSO>k__BackingField: {fileID: 11400000, guid: 3cb1ea307e3d9e04ab9106703f0b1c39, type: 2}
+--- !u!114 &5053099867160823494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375924472083528341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ba21ea28124f5285e6526f473a9cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.Player.PlayerView
+  <HitFeedbackView>k__BackingField: {fileID: 959697203013246540}
 --- !u!33 &384644390399106325
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -142,6 +158,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &959697203013246540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375924472083528341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046acc45e4a34ed79d32472248043160, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::View.General.HitFeedbackView
+  <TargetRenderer>k__BackingField: {fileID: 7763047207587605394}
 --- !u!1001 &1520848044028035074
 PrefabInstance:
   m_ObjectHideFlags: 0

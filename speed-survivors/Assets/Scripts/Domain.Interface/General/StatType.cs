@@ -2,7 +2,7 @@ namespace Domain.Interface.General
 {
 	public enum StatType
 	{
-		Health,
+		MaxHealth,
 		LateralMoveSpeed,
 		ForwardMoveSpeed,
 		Damage,

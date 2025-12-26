@@ -1,17 +1,23 @@
 using System;
 using Controller.DebugController;
 using Controller.General;
+using Controller.Interface;
+using Controller.UI;
 using Controller.Weapon.Ammo;
 using Data.ScriptableObjects.Generator;
 using Domain.Interface.General;
 using Domain.Interface.Loot;
 using Domain.Interface.Player;
 using UnityEngine;
+using View.Player;
 
 namespace Controller.Player
 {
-	public class PlayerController : InitializableMono
+	public class PlayerController : InitializableMono, IHitable
 	{
+		[field: SerializeField]
+		private PlayerView View { get; set; }
+
 		[field: SerializeField]
 		private BoxCollider Collider { get; set; }
 
@@ -25,6 +31,9 @@ namespace Controller.Player
 		private PlayerInputHandler InputHandler { get; set; }
 		private PlayerMovementHandler MovementHandler { get; set; }
 		private int XpCollectedSubscribeCount { get; set; }
+		private int HpChangedSubscribeCount { get; set; }
+		private int StatsUpdateSubscribeCount { get; set; }
+		private int DeathSubscribeCount { get; set; }
 
 		public void Init(Camera mainCamera, Vector3 startingPos, float xMoveRange, ProjectileHandler projectileHandler)
 		{
@@ -36,6 +45,7 @@ namespace Controller.Player
 			MovementHandler = new PlayerMovementHandler(Player, transform, xMoveRange, startingPos.x);
 
 			SetupStartingPosition(startingPos);
+			View.Setup();
 
 			Initialized = true;
 		}
@@ -44,10 +54,14 @@ namespace Controller.Player
 		{
 			CheckInit();
 
+			if (!Player.IsAlive)
+				return;
+
 			DebugTick();
 			WeaponArsenalHandler.Tick(deltaTime, true, Player.Stats.GetStat(StatType.ForwardMoveSpeed));
 			HandleInput();
 			HandleMovement(deltaTime);
+			View.Tick(deltaTime);
 		}
 
 		public IPlayer GetPlayerDomainRef()
@@ -90,6 +104,8 @@ namespace Controller.Player
 
 		public void SubscribeToXpCollected(Action<(int currentXp, int level, int nextLevelXpDelta)> callback)
 		{
+			CheckInit();
+
 			Player.SubscribeToXpCollected(callback);
 			XpCollectedSubscribeCount++;
 		}
@@ -102,6 +118,48 @@ namespace Controller.Player
 			XpCollectedSubscribeCount--;
 		}
 
+		public void SubscribeToCurrentHpChanged(Action<float, float> handlePlayerHp)
+		{
+			CheckInit();
+
+			Player.SubscribeToCurrentHpChanged(handlePlayerHp);
+			HpChangedSubscribeCount++;
+		}
+
+		public void UnsubscribeFromCurrentHpChanged(Action<float, float> handlePlayerHp)
+		{
+			CheckInit();
+
+			Player.UnsubscribeFromCurrentHpChanged(handlePlayerHp);
+			HpChangedSubscribeCount--;
+		}
+
+		public void SubscribeToStatsUpdate(Action<StatType, float, float> handleStatsUpdate)
+		{
+			CheckInit();
+
+			Player.SubscribeToStatsUpdate(handleStatsUpdate);
+			StatsUpdateSubscribeCount++;
+		}
+
+		public void UnsubscribeFromStatsUpdate(Action<StatType, float, float> handleStatsUpdate)
+		{
+			CheckInit();
+
+			Player.UnsubscribeFromStatsUpdate(handleStatsUpdate);
+			StatsUpdateSubscribeCount--;
+		}
+
+		public void SubscribeToPlayerDeath(Action onPlayerDeath)
+		{
+			Player.SubscribeToPlayerDeath(onPlayerDeath);
+		}
+
+		public void UnsubscribeFromPlayerDeath(Action onPlayerDeath)
+		{
+			Player.UnsubscribeFromPlayerDeath(onPlayerDeath);
+		}
+
 		public (int currentXp, int level, int nextLevelXpDelta) GetCurrentXpData()
 		{
 			CheckInit();
@@ -110,16 +168,6 @@ namespace Controller.Player
 			return (progress.CurrentExperience,
 				progress.CurrentLevel,
 				progress.ExperienceRequiredForNextLevel - progress.ExperienceRequiredForPrevious);
-		}
-
-		private void OnDestroy()
-		{
-			if (InputHandler != null)
-				InputHandler.DisableInput();
-
-			if (XpCollectedSubscribeCount > 0)
-				throw new InvalidOperationException(
-					$"PlayerController was destroyed but there are still {XpCollectedSubscribeCount} subscriptions to XP collected events. Make sure to unsubscribe properly to avoid memory leaks.");
 		}
 
 		public float GetMagnetRangeSquared()
@@ -131,6 +179,36 @@ namespace Controller.Player
 		public float GetCurrentForwardSpeed()
 		{
 			return Player.Stats.GetStat(StatType.ForwardMoveSpeed);
+		}
+
+		public bool TakeHit(float damage, bool isCritical)
+		{
+			CheckInit();
+
+			var alive = Player.TakeDamage(damage);
+			View.PlayHitFeedback();
+
+			var positionWithOffset = transform.position + new Vector3(0f, GetHeight() * 0.5f, 0f);
+			DamageNumbersManager.Instance.SpawnDamagePopup(positionWithOffset, (int) damage, isCritical);
+
+			return alive;
+		}
+
+		private float GetHeight()
+		{
+			return Collider.size.y;
+		}
+
+		private void OnDestroy()
+		{
+			if (InputHandler != null)
+				InputHandler.DisableInput();
+
+			if (XpCollectedSubscribeCount > 0 ||
+			    HpChangedSubscribeCount > 0 ||
+			    StatsUpdateSubscribeCount > 0 ||
+			    DeathSubscribeCount > 0)
+				Debug.LogWarning("PlayerController was destroyed but there are still subscriptions to player events");
 		}
 	}
 }

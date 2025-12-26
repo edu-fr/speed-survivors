@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 namespace Controller.General
@@ -18,6 +17,12 @@ namespace Controller.General
 			{
 				Destroy(gameObject);
 			}
+		}
+
+		public void SlowTime(string caller)
+		{
+			Time.timeScale = .2f;
+			Debug.Log($"Time slowed by {caller}");
 		}
 
 		public void PauseTime(string caller)
