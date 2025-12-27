@@ -25,7 +25,10 @@ namespace Controller.SceneController
 		private PlayerController PlayerPrefab { get; set; }
 
 		[field: SerializeField]
-		private EnemiesHandler EnemiesHandler { get; set; }
+		private EnemySpawnHandler EnemySpawnHandler { get; set; }
+
+		[field: SerializeField]
+		private WorldObjectsSpawnHandler WorldObjectsSpawnHandler { get; set; }
 
 		[field: SerializeField]
 		private DropHandler DropHandler { get; set; }
@@ -59,7 +62,8 @@ namespace Controller.SceneController
 			var deltaTime = Time.deltaTime;
 			PlayerController.Tick(deltaTime);
 			ProjectileHandler.Tick();
-			EnemiesHandler.Tick(deltaTime);
+			EnemySpawnHandler.Tick(deltaTime);
+			WorldObjectsSpawnHandler.Tick(deltaTime);
 			WorldBuildHandler.Tick();
 			DropHandler.Tick();
 		}
@@ -70,7 +74,6 @@ namespace Controller.SceneController
 				return;
 
 			FollowingCameraHandler.LateTick();
-			EnemiesHandler.LateTick();
 		}
 
 		private void SetupScene()
@@ -85,8 +88,9 @@ namespace Controller.SceneController
 
 			var playerTransform = PlayerController.transform;
 			FollowingCameraHandler.Init(playerTransform);
-			EnemiesHandler.Init(playerTransform, DropHandler);
-			EnemiesHandler.OnEnemyDespawnedAlive += PlayerController.TakeHit;
+			EnemySpawnHandler.Init(playerTransform, DropHandler);
+			EnemySpawnHandler.OnDespawnedAlive += PlayerController.TakeHit;
+			WorldObjectsSpawnHandler.Init(playerTransform, DropHandler);
 			WorldBuildHandler.Init(playerTransform);
 			WorldBuildHandler.SpawnInitialWorldSections();
 		}
@@ -96,7 +100,8 @@ namespace Controller.SceneController
 			if (GameplayStarted)
 				throw new InvalidOperationException("Gameplay already started");
 
-			EnemiesHandler.StartSpawn();
+			EnemySpawnHandler.StartSpawn();
+			WorldObjectsSpawnHandler.StartSpawn();
 			GameplayStarted = true;
 		}
 
@@ -108,9 +113,9 @@ namespace Controller.SceneController
 		private IEnumerator DeathCoroutine()
 		{
 			GameManager.Instance.SlowTime(nameof(GameplaySceneController) + ".OnPlayerDeath");
-			yield return new WaitForSecondsRealtime(1f);
+			yield return new WaitForSecondsRealtime(.4f);
 			UIHandler.ShowTryAgainModal();
-			yield return new WaitForSecondsRealtime(1.5f);
+			yield return new WaitForSecondsRealtime(1.3f);
 			UIHandler.HideTryAgainModal();
 			GameManager.Instance.ResumeTime(nameof(GameplaySceneController) + ".OnPlayerDeath");
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -118,7 +123,7 @@ namespace Controller.SceneController
 
 		private void OnDestroy()
 		{
-			EnemiesHandler.OnEnemyDespawnedAlive -= PlayerController.TakeHit;
+			EnemySpawnHandler.OnDespawnedAlive -= PlayerController.TakeHit;
 			PlayerController.UnsubscribeFromPlayerDeath(OnPlayerDeath);
 		}
 	}

@@ -34,7 +34,7 @@ namespace Domain.Player
 		{
 			Stats = new PlayerStats();
 			CurrentHP = Stats.GetStat(StatType.MaxHealth);
-			Arsenal = new WeaponArsenal(new List<WeaponType>() { WeaponType.IceWind });
+			Arsenal = new WeaponArsenal(new List<WeaponType>() { WeaponType.PeaShooter });
 			LevelProgression = new LevelProgression(growthConfig);
 		}
 

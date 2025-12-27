@@ -14,6 +14,8 @@ namespace Controller.Drop
 	[Serializable]
 	public class DropHandler : Initializable
 	{
+		private const float DespawnRange = 100f;
+
 		[Header("Magnet Config")]
 		private const float MagnetSpeed = 5f;
 
@@ -75,7 +77,7 @@ namespace Controller.Drop
 					continue;
 				}
 
-				TickProcessMovementAndCollection(item, playerPosition, deltaTime, i);
+				TickProcessMovementAndTryCollect(item, playerPosition, deltaTime, i);
 			}
 		}
 
@@ -168,11 +170,11 @@ namespace Controller.Drop
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void TickProcessMovementAndCollection(DropController item, Vector3 playerPosition, float deltaTime,
+		private bool TickProcessMovementAndTryCollect(DropController item, Vector3 playerPosition, float deltaTime,
 			int itemIndex)
 		{
 			if (!item.IsMagnetized)
-				return;
+				return false;
 
 			var currentPosition = item.TransformCache.position;
 			var directionVector = playerPosition - currentPosition;
@@ -181,11 +183,22 @@ namespace Controller.Drop
 			if (directionVector.sqrMagnitude <= moveDistance * moveDistance)
 			{
 				CollectItemAtIndex(item, itemIndex);
+				return true;
 			}
-			else
+
+			item.TransformCache.position = currentPosition + directionVector.normalized * moveDistance;
+
+			if (IsInDespawnRange(item.TransformCache.position.z))
 			{
-				item.TransformCache.position = currentPosition + directionVector.normalized * moveDistance;
+				var last = ActiveDrops.Count - 1;
+				ActiveDrops[itemIndex] = ActiveDrops[last];
+				ActiveDrops.RemoveAt(last);
+
+				PoolManager.Instance.Despawn(GetPrefabForDropType(item.GetLootDataCopy().Type), item);
+				return true;
 			}
+
+			return false;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -221,6 +234,11 @@ namespace Controller.Drop
 			{
 				item.SetMagnetized();
 			}
+		}
+
+		private bool IsInDespawnRange(float dropZ)
+		{
+			return PlayerController.transform.position.z - dropZ > DespawnRange;
 		}
 	}
 }
